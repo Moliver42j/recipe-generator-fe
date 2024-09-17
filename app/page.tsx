@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useHome } from './homeContext'; // Import the home context
+import { useConfig } from './configContext'; // Import the context
 
 export default function Home() {
-  const [ingredients, setIngredients] = useState<string[]>([]);
-  const [pantryItems, setPantryItems] = useState<string[]>([]);
-  const [spices, setSpices] = useState<string[]>([]);
-  const [dietaryRestrictions, setDietaryRestrictions] = useState<string[]>([]);
+  const { ingredients, setIngredients } = useHome();
+  const { pantryItems, setPantryItems, spices, setSpices, dietaryRequirements, setDietaryRequirements } = useConfig();
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false); // State for handling loading
   const [recipe, setRecipe] = useState<string | null>(null); // State for storing API response
@@ -26,7 +26,7 @@ export default function Home() {
     const payload = {
       ingredients: [...ingredients, ...pantryItems], // Combine fresh and pantry ingredients
       spices: spices,
-      dietaryRestrictions: dietaryRestrictions,
+      dietaryRestrictions: dietaryRequirements,
     };
 
      // Log the payload to the console

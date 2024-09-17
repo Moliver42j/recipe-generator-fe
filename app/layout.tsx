@@ -1,15 +1,21 @@
-"use client"; // Add this to make sure it's a client component
+"use client";
 
+import { ConfigProvider } from './configContext'; // Adjust path as needed
 import { ReactNode } from 'react';
-import { ConfigProvider } from './configContext'; // Import your context provider
+import './globals.css'; // Ensure global styles are applied
+import { HomeProvider } from './homeContext';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <ConfigProvider>
-          {children}
-        </ConfigProvider>
+      <body className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+        <HomeProvider>
+          <ConfigProvider>
+            <main className="container mx-auto px-4 py-6">
+              {children}
+            </main>
+          </ConfigProvider>
+        </HomeProvider>
       </body>
     </html>
   );
