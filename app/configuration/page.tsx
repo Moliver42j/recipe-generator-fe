@@ -57,6 +57,11 @@ export default function Configuration() {
           onChange={(e) => setPantryInput(e.target.value)}
           placeholder="Enter pantry item"
           className="border p-2 rounded-md w-full mb-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleAddPantryItem(); // Call the function to add the ingredient
+            }
+          }}
         />
         <button
           onClick={handleAddPantryItem}
