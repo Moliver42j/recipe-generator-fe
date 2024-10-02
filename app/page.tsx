@@ -7,11 +7,9 @@ import { useConfig } from './configContext'; // Import the configuration context
 
 // Define the Recipe type
 interface Recipe {
-  recipe: {
-    name: string;
+    recipe: string;
     ingredients: string[];
     instructions: string;
-  };
 }
 
 export default function Home() {
@@ -174,14 +172,14 @@ export default function Home() {
 
           {/* Format recipe output */}
           <div className="bg-gray-100 p-4 rounded-md text-black">
-            <h3 className="font-bold mb-2">{recipe.recipe.name}</h3>
+            <h3 className="font-bold mb-2">{recipe.recipe}</h3>
 
             {/* Check if ingredients exist before rendering */}
-            {recipe.recipe.ingredients && (
+            {recipe.ingredients && (
               <div>
                 <h4 className="font-semibold">Ingredients:</h4>
                 <ul className="list-disc list-inside mb-4">
-                  {recipe.recipe.ingredients.map((ingredient: string, index: number) => (
+                  {recipe.ingredients.map((ingredient: string, index: number) => (
                     <li key={index}>{ingredient}</li>
                   ))}
                 </ul>
@@ -189,15 +187,16 @@ export default function Home() {
             )}
 
             {/* Check if instructions exist before rendering */}
-            {recipe.recipe.instructions && (
+            {recipe.instructions && (
               <div>
                 <h4 className="font-semibold">Instructions:</h4>
-                <p>{recipe.recipe.instructions}</p>
+                <p>{recipe.instructions}</p>
               </div>
             )}
           </div>
         </div>
       )}
+
       {/* Navigation Links */}
       <nav className="mt-6">
         <ul className="list-none">
