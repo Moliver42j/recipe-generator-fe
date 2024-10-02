@@ -5,17 +5,28 @@ import Link from 'next/link';
 import { useHome } from './homeContext'; // Import the home context
 import { useConfig } from './configContext'; // Import the configuration context
 
+// Define the Recipe type
+interface Recipe {
+  recipe: {
+    name: string;
+    ingredients: string[];
+    instructions: string;
+  };
+}
+
 export default function Home() {
   const { ingredients, setIngredients } = useHome();
   const { pantryItems, spices, dietaryRequirements } = useConfig(); // Get pantry items and spices from config
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false); // State for handling loading
-  const [recipe, setRecipe] = useState<string | null>(null); // State for storing API response
+  const [recipe, setRecipe] = useState<Recipe | null>(null); // State for storing API response
 
   // Handle adding fresh ingredients
   const handleAddIngredient = () => {
     if (input.trim() !== '') {
-      setIngredients([...ingredients, input]);
+      // Split by commas and trim whitespace to allow comma-separated entries
+      const newIngredients = input.split(',').map(ing => ing.trim());
+      setIngredients([...ingredients, ...newIngredients]);
       setInput('');
     }
   };
@@ -53,16 +64,16 @@ export default function Home() {
       console.log("API Response:", result); // Log the response for debugging
 
       // Parse the API response body (assuming it's stringified JSON)
-      const recipeData = JSON.parse(result.body);
+      const recipeData: Recipe = JSON.parse(result.body);
       setRecipe(recipeData); // Set the parsed recipe to the state
 
     } catch (error) {
       if (error instanceof Error) {
         console.error("Error generating recipe:", error.message); // Log the error
-        setRecipe(`Error generating recipe: ${error.message}`); // Display error in the UI
+        setRecipe(null); // Clear the recipe on error
       } else {
         console.error("Unknown error:", error);
-        setRecipe("An unknown error occurred.");
+        setRecipe(null); // Clear the recipe on unknown error
       }
     } finally {
       setLoading(false); // Stop loading after request finishes
@@ -78,7 +89,7 @@ export default function Home() {
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        placeholder="Enter fresh ingredient"
+        placeholder="Enter fresh ingredients (comma-separated)"
         className="border p-2 rounded-md w-full mb-2"
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
@@ -163,14 +174,14 @@ export default function Home() {
 
           {/* Format recipe output */}
           <div className="bg-gray-100 p-4 rounded-md text-black">
-            <h3 className="font-bold mb-2">{recipe.recipe}</h3>
+            <h3 className="font-bold mb-2">{recipe.recipe.name}</h3>
 
             {/* Check if ingredients exist before rendering */}
-            {recipe.ingredients && (
+            {recipe.recipe.ingredients && (
               <div>
                 <h4 className="font-semibold">Ingredients:</h4>
                 <ul className="list-disc list-inside mb-4">
-                  {recipe.ingredients.map((ingredient: string, index: number) => (
+                  {recipe.recipe.ingredients.map((ingredient: string, index: number) => (
                     <li key={index}>{ingredient}</li>
                   ))}
                 </ul>
@@ -178,23 +189,15 @@ export default function Home() {
             )}
 
             {/* Check if instructions exist before rendering */}
-            {recipe.instructions && (
+            {recipe.recipe.instructions && (
               <div>
                 <h4 className="font-semibold">Instructions:</h4>
-                <p>{recipe.instructions}</p>
+                <p>{recipe.recipe.instructions}</p>
               </div>
             )}
-
-            {/* Optional link to full recipe (uncomment if needed) */}
-            {/* {recipe.link && (
-              <p className="mt-2">
-                <a href={recipe.link} className="text-blue-500 hover:underline">Full Recipe</a>
-              </p>
-            )} */}
           </div>
         </div>
       )}
-
       {/* Navigation Links */}
       <nav className="mt-6">
         <ul className="list-none">
