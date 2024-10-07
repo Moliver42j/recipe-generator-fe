@@ -5,36 +5,46 @@
 :root {
   --background-light: #1E2D24; /* Dark green-gray background */
   --foreground-light: #F1F3F0; /* Soft white text */
-  --background-dark: #121A16; /* Very dark green-black background */
-  --foreground-dark: #D1D9D3; /* Soft green-gray text */
-
+  --background-dark: #16241B; /* Slightly lighter dark green-black background */
+  --foreground-dark: #C8E2C6; /* Softer light green-gray text */
+  
   /* Default (light mode) color variables */
   --background: var(--background-light);
   --foreground: var(--foreground-light);
-
+  
   /* Primary and secondary colors for light mode */
   --primary-light: #2A5934; /* Rich forest green */
   --secondary-light: #8FBF59; /* Bright green */
   --text-primary-light: #E0E6DD; /* Light gray-green text */
   --text-secondary-light: #A3ADA0; /* Muted green-gray text */
-
+  
   /* Sidebar color for light mode */
   --sidebar-light: #26362B; /* Deep green sidebar */
+  
+  /* Banner color for light mode */
+  --banner-light: #2A5934; /* Same as primary color for the banner */
+}
+
+#root, #__next {
+  height: 100%; /* Ensure the Next.js container takes up full height */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: var(--background-dark);
-    --foreground: var(--foreground-dark);
+    --background: #16241B;
+    --foreground: #C8E2C6;
 
     /* Primary and secondary colors for dark mode */
-    --primary-dark: #1D4A2A; /* Darker forest green */
-    --secondary-dark: #6D9F46; /* Softer bright green */
-    --text-primary-dark: #D1D9D3; /* Soft green-gray text */
-    --text-secondary-dark: #9CA3A0; /* Muted gray text */
+    --primary: #24513D; /* Darker forest green */
+    --secondary: #5F9463; /* Softer bright green */
+    --text-primary: #D5E6D3; /* Softer greenish-gray text */
+    --text-secondary: #9CA8A0; /* Muted gray text */
 
     /* Sidebar color for dark mode */
-    --sidebar-dark: #17221B; /* Very dark green sidebar */
+    --sidebar: #1B3526; /* Slightly lighter dark green */
+
+    /* Banner color for dark mode */
+    --banner: #24513D; /* Same as primary-dark for the banner */
   }
 }
 
@@ -49,6 +59,7 @@
     --text-primary: var(--text-primary-light);
     --text-secondary: var(--text-secondary-light);
     --sidebar: var(--sidebar-light);
+    --banner: var(--banner-light);
   }
 }
 
@@ -58,11 +69,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Banner / Header */
 .header {
-  background-color: var(--primary);
+  background-color: var(--banner); /* Use banner color */
   color: var(--text-primary);
 }
 
+/* Sidebar */
 .sidebar {
   background-color: var(--sidebar);
   color: var(--text-primary);

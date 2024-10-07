@@ -8,7 +8,7 @@ import { HomeProvider } from './homeContext';
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+      <body className="min-h-screen bg-background dark:bg-background text-gray-900 dark:text-gray-100 font-sans">
         <HomeProvider>
           <ConfigProvider>
             <main className="container mx-auto px-4 py-6">
