@@ -1,31 +1,32 @@
 "use client"; // Add this line at the top
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useHome } from './homeContext'; // Import the home context
-import { useConfig } from './configContext'; // Import the configuration context
+import { useState } from "react";
+import Link from "next/link";
+import { useHome } from "./homeContext"; // Import the home context
+import { useConfig } from "./configContext"; // Import the configuration context
+import { TrashIcon } from '@heroicons/react/24/solid';
 
 // Define the Recipe type
 interface Recipe {
-    recipe: string;
-    ingredients: string[];
-    instructions: string;
+  recipe: string;
+  ingredients: string[];
+  instructions: string;
 }
 
 export default function Home() {
   const { ingredients, setIngredients } = useHome();
-  const { pantryItems, spices, dietaryRequirements } = useConfig(); // Get pantry items and spices from config
-  const [input, setInput] = useState('');
+  const { pantryItems, setPantryItems, spices, dietaryRequirements } = useConfig(); // Get pantry items and spices from config
+  const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false); // State for handling loading
   const [recipe, setRecipe] = useState<Recipe | null>(null); // State for storing API response
 
   // Handle adding fresh ingredients
   const handleAddIngredient = () => {
-    if (input.trim() !== '') {
+    if (input.trim() !== "") {
       // Split by commas and trim whitespace to allow comma-separated entries
-      const newIngredients = input.split(',').map(ing => ing.trim());
+      const newIngredients = input.split(",").map((ing) => ing.trim());
       setIngredients([...ingredients, ...newIngredients]);
-      setInput('');
+      setInput("");
     }
   };
 
@@ -64,7 +65,6 @@ export default function Home() {
       // Parse the API response body (assuming it's stringified JSON)
       const recipeData: Recipe = JSON.parse(result.body);
       setRecipe(recipeData); // Set the parsed recipe to the state
-
     } catch (error) {
       if (error instanceof Error) {
         console.error("Error generating recipe:", error.message); // Log the error
@@ -78,25 +78,35 @@ export default function Home() {
     }
   };
 
+  // Handle removing a fresh ingredient
+  const handleRemoveIngredient = (index: number) => {
+    const updatedIngredients = ingredients.filter((_, i) => i !== index);
+    setIngredients(updatedIngredients);
+  };
+
+  const handleRemovePantryItem = (item: string) => {
+    setPantryItems(pantryItems.filter(pantryItem => pantryItem !== item));
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Enter Fresh Ingredients</h1>
 
       {/* Input to add fresh ingredients */}
-      <input 
+      <input
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Enter fresh ingredients (comma-separated)"
-        className="border p-2 rounded-md w-full mb-2"
+        className="border p-2 rounded-md w-full mb-2 text-black" // Add `text-black` to set text color
         onKeyDown={(e) => {
-          if (e.key === 'Enter') {
+          if (e.key === "Enter") {
             handleAddIngredient(); // Trigger add ingredient on Enter
           }
         }}
       />
 
-      <button 
+      <button
         onClick={handleAddIngredient}
         className="bg-blue-500 text-white px-4 py-2 rounded-md"
       >
@@ -112,7 +122,16 @@ export default function Home() {
         {ingredients.length > 0 ? (
           <ul className="list-disc list-inside">
             {ingredients.map((ingredient, index) => (
-              <li key={index}>{ingredient}</li>
+              <li key={index} className="flex items-center justify-between">
+                <span>{ingredient}</span>
+                <button
+                  onClick={() => handleRemoveIngredient(index)} // Handle deletion
+                  className="text-red-500 ml-4"
+                >
+                  <TrashIcon className="h-5 w-5" />{" "}
+                  {/* Trash icon instead of "Delete" text */}
+                </button>
+              </li>
             ))}
           </ul>
         ) : (
@@ -126,7 +145,15 @@ export default function Home() {
         {pantryItems.length > 0 ? (
           <ul className="list-disc list-inside">
             {pantryItems.map((item, index) => (
-              <li key={index}>{item}</li>
+              <li key={index} className="flex items-center justify-between">
+                <span>{item}</span>
+                <button
+                  onClick={() => handleRemovePantryItem(item)} // Untick item
+                  className="text-red-500 ml-4"
+                >
+                  <TrashIcon className="h-5 w-5" /> {/* Trash icon for unticking */}
+                </button>
+              </li>
             ))}
           </ul>
         ) : (
@@ -149,15 +176,31 @@ export default function Home() {
       </div>
 
       {/* Generate Recipe Button with Loading Spinner */}
-      <button 
+      <button
         onClick={handleGenerateRecipe}
         className="bg-green-500 text-white px-4 py-2 rounded-md mt-4 flex items-center justify-center"
         disabled={loading} // Disable the button while loading
       >
         {loading ? (
-          <svg className="animate-spin h-5 w-5 text-white mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l4-4-4-4v4a8 8 0 100 16 8 8 0 01-8-8z"></path>
+          <svg
+            className="animate-spin h-5 w-5 text-white mr-3"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4l4-4-4-4v4a8 8 0 100 16 8 8 0 01-8-8z"
+            ></path>
           </svg>
         ) : (
           "Generate Recipe"
@@ -179,9 +222,11 @@ export default function Home() {
               <div>
                 <h4 className="font-semibold">Ingredients:</h4>
                 <ul className="list-disc list-inside mb-4">
-                  {recipe.ingredients.map((ingredient: string, index: number) => (
-                    <li key={index}>{ingredient}</li>
-                  ))}
+                  {recipe.ingredients.map(
+                    (ingredient: string, index: number) => (
+                      <li key={index}>{ingredient}</li>
+                    )
+                  )}
                 </ul>
               </div>
             )}
@@ -201,14 +246,10 @@ export default function Home() {
       <nav className="mt-6">
         <ul className="list-none">
           <li>
-            <Link href="/configuration">
-              Go to Configuration Page
-            </Link>
+            <Link href="/configuration">Go to Configuration Page</Link>
           </li>
           <li>
-            <Link href="/settings">
-              Go to Settings Page
-            </Link>
+            <Link href="/settings">Go to Settings Page</Link>
           </li>
         </ul>
       </nav>

@@ -7,23 +7,31 @@ import { useConfig } from '../configContext'; // Import the context
 export default function Configuration() {
   const { pantryItems, setPantryItems, spices, setSpices, dietaryRequirements, setDietaryRequirements } = useConfig();
 
+  // Keep a full list of all possible pantry items (both ticked and unticked)
+  const [allPantryItems, setAllPantryItems] = useState<string[]>([...pantryItems]);
+
   // State to handle adding custom pantry items
   const [pantryInput, setPantryInput] = useState('');
 
   // Handle checkbox toggle for pantry items
   const handleCheckboxChange = (item: string) => {
     if (pantryItems.includes(item)) {
-      setPantryItems(pantryItems.filter(pantryItem => pantryItem !== item)); // Remove if unchecked
+      // If the item is already checked, uncheck it
+      setPantryItems(pantryItems.filter(pantryItem => pantryItem !== item));
     } else {
-      setPantryItems([...pantryItems, item]); // Add if checked
+      // Otherwise, check the item
+      setPantryItems([...pantryItems, item]);
     }
   };
 
   // Handle adding custom pantry item
   const handleAddPantryItem = () => {
     if (pantryInput.trim() === '') return;
+    if (!allPantryItems.includes(pantryInput)) {
+      setAllPantryItems([...allPantryItems, pantryInput]); // Add to all items list
+    }
     if (!pantryItems.includes(pantryInput)) {
-      setPantryItems([...pantryItems, pantryInput]);
+      setPantryItems([...pantryItems, pantryInput]); // Add to checked items
     }
     setPantryInput(''); // Clear input after adding
   };
@@ -75,12 +83,12 @@ export default function Configuration() {
       <div className="mt-6">
         <h2 className="text-lg font-bold">Pantry Items</h2>
         <div className="grid grid-cols-2 gap-4">
-          {pantryItems.map((item, index) => (
+          {allPantryItems.map((item, index) => (
             <label key={index} className="flex items-center space-x-3">
               <input
                 type="checkbox"
-                checked={pantryItems.includes(item)}
-                onChange={() => handleCheckboxChange(item)}
+                checked={pantryItems.includes(item)} // Control checkbox state based on pantryItems
+                onChange={() => handleCheckboxChange(item)} // Toggle checked/unchecked state
                 className="form-checkbox h-5 w-5 text-blue-600"
               />
               <span>{item}</span>
@@ -127,7 +135,7 @@ export default function Configuration() {
           {spices.length > 0 ? spices.map((item, index) => (
             <li key={index}>{item}</li>
           )) : (
-            <li>No spices added yet.</li>
+            <li>No spices added yet. (An empty list will assume all spices available)</li>
           )}
         </ul>
       </div>
