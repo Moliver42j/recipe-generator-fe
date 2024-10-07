@@ -3,16 +3,38 @@
 @tailwind utilities;
 
 :root {
-  --background-light: #ffffff;
-  --foreground-light: #171717;
+  --background-light: #D0E5C3;
+  --foreground-light: #355E3B;
   --background-dark: #0a0a0a;
   --foreground-dark: #ededed;
+
+  /* Default (light mode) color variables */
+  --background: var(--background-light);
+  --foreground: var(--foreground-light);
+
+  /* Primary and secondary colors for light mode */
+  --primary-light: #355E3B; /* Dark Green */
+  --secondary-light: #A2D45E; /* Bright Green */
+  --text-primary-light: #3D3D3D; /* Dark Gray text */
+  --text-secondary-light: #6B7280; /* Gray text */
+
+  /* Sidebar color for light mode */
+  --sidebar-light: #ffffff; /* White sidebar background */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: var(--background-dark);
     --foreground: var(--foreground-dark);
+
+    /* Primary and secondary colors for dark mode */
+    --primary-dark: #6B8F71; /* Muted Dark Green */
+    --secondary-dark: #8FBF59; /* Softer Bright Green */
+    --text-primary-dark: #FFFFFF; /* White text */
+    --text-secondary-dark: #9CA3AF; /* Light gray text */
+
+    /* Sidebar color for dark mode */
+    --sidebar-dark: #6B8F71; /* Dark sidebar background */
   }
 }
 
@@ -20,6 +42,13 @@
   :root {
     --background: var(--background-light);
     --foreground: var(--foreground-light);
+
+    /* Restore light mode colors */
+    --primary: var(--primary-light);
+    --secondary: var(--secondary-light);
+    --text-primary: var(--text-primary-light);
+    --text-secondary: var(--text-secondary-light);
+    --sidebar: var(--sidebar-light);
   }
 }
 
@@ -27,4 +56,18 @@ body {
   color: var(--foreground);
   background-color: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.header {
+  background-color: var(--primary);
+  color: var(--text-primary);
+}
+
+.sidebar {
+  background-color: var(--sidebar);
+  color: var(--text-primary);
+}
+
+a:hover {
+  color: var(--secondary);
 }

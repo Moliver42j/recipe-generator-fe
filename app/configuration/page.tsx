@@ -64,7 +64,7 @@ export default function Configuration() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Banner Section */}
-      <header className="bg-blue-600 text-white p-4 fixed top-0 left-0 right-0 z-50">
+      <header className="p-4 fixed top-0 left-0 right-0 z-50" style={{ backgroundColor: "var(--primary)", color: "var(--text-primary)" }}>
         <div className="flex items-center justify-between px-4">
           <div className="flex items-center space-x-3">
             {/* Logo and Site Name */}
@@ -79,9 +79,9 @@ export default function Configuration() {
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? (
-              <XMarkIcon className="h-6 w-6" />
+              <XMarkIcon className="h-6 w-6" style={{ color: "var(--text-primary)" }} />
             ) : (
-              <Bars3Icon className="h-6 w-6" />
+              <Bars3Icon className="h-6 w-6" style={{ color: "var(--text-primary)" }} />
             )}
           </button>
         </div>
@@ -89,17 +89,20 @@ export default function Configuration() {
 
       <div className="flex">
         {/* Sidebar for Desktop */}
-        <aside className="hidden lg:block bg-gray-900 text-white fixed top-16 left-0 h-full w-64">
+        <aside
+          className="hidden lg:block fixed top-16 left-0 h-full w-64"
+          style={{ backgroundColor: "var(--sidebar)", color: "var(--text-primary)" }}
+        >
           <nav className="p-4">
             <ul>
               <li className="mb-4">
                 <Link href="/" className="hover:text-gray-300">
-                  Go to Home Page
+                  Home
                 </Link>
               </li>
               <li className="mb-4">
                 <Link href="/settings" className="hover:text-gray-300">
-                  Go to Settings Page
+                  Settings
                 </Link>
               </li>
             </ul>
@@ -108,23 +111,28 @@ export default function Configuration() {
 
         {/* Mobile Menu */}
         {menuOpen && (
-          <aside className="lg:hidden bg-blue-700 text-white p-4 absolute top-16 left-0 w-full z-50">
+          <aside
+            className="lg:hidden p-4 absolute top-16 left-0 w-full z-50"
+            style={{ backgroundColor: "var(--primary)", color: "var(--text-primary)" }}
+          >
             <nav>
               <ul>
                 <li className="mb-4">
                   <Link
                     href="/"
-                    className="hover:bg-blue-500 block px-4 py-2 rounded"
+                    className="block px-4 py-2 rounded"
+                    style={{ backgroundColor: "var(--secondary)", color: "var(--text-primary)" }}
                   >
-                    Go to Home Page
+                    Home
                   </Link>
                 </li>
                 <li className="mb-4">
                   <Link
                     href="/settings"
-                    className="hover:bg-blue-500 block px-4 py-2 rounded"
+                    className="block px-4 py-2 rounded"
+                    style={{ backgroundColor: "var(--secondary)", color: "var(--text-primary)" }}
                   >
-                    Go to Settings Page
+                    Settings
                   </Link>
                 </li>
               </ul>
@@ -133,28 +141,38 @@ export default function Configuration() {
         )}
 
         {/* Main Content */}
-        <main className="flex-grow p-8 mt-16 lg:ml-64"> {/* Add `mt-16` to account for the height of the top bar */}
-        <h1 className="text-2xl font-bold mb-4">Configure Your Ingredients</h1>
+        <main className="flex-grow p-8 mt-16 lg:ml-64">
+          <h1 className="text-2xl font-bold mb-4" style={{ color: "var(--foreground)" }}>
+            Configure Your Ingredients
+          </h1>
           {/* Add Custom Pantry Item */}
           <div className="mt-6">
-            <h2 className="text-lg font-bold">Add Pantry Item</h2>
+            <h2 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>
+              Add Pantry Item
+            </h2>
             <input
               type="text"
-              value=""
-              onChange={() => {}}
+              value={pantryInput} // Bind to state variable
+              onChange={(e) => setPantryInput(e.target.value)} // Update state on input change
               placeholder="Enter pantry item"
-              className="border p-2 rounded-md w-full mb-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+              className="border p-2 rounded-md w-full mb-2"
+              style={{
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
+              }}
             />
             <button
               onClick={handleAddPantryItem}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md w-full"
+              className="px-4 py-2 rounded-md w-full"
+              style={{ backgroundColor: "var(--primary)", color: "var(--text-primary)" }}
             >
               Add Pantry Item
             </button>
           </div>
+          
           {/* Pantry Staples with Checkboxes */}
           <div className="mt-6">
-            <h2 className="text-lg font-bold">Pantry Items</h2>
+            <h2 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>Pantry Items</h2>
             <div className="grid grid-cols-2 gap-4">
               {allPantryItems.map((item, index) => (
                 <label key={index} className="flex items-center space-x-3">
@@ -162,16 +180,18 @@ export default function Configuration() {
                     type="checkbox"
                     checked={pantryItems.includes(item)}
                     onChange={() => handleCheckboxChange(item)}
-                    className="form-checkbox h-5 w-5 text-blue-600"
+                    className="form-checkbox h-5 w-5"
+                    style={{ color: "var(--primary)" }}
                   />
-                  <span>{item}</span>
+                  <span style={{ color: "var(--foreground)" }}>{item}</span>
                 </label>
               ))}
             </div>
           </div>
+
           {/* Spices and Dietary Requirements */}
           <div className="mt-6">
-            <h2 className="text-lg font-bold">
+            <h2 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>
               Add Spices or Dietary Requirements
             </h2>
 
@@ -179,7 +199,11 @@ export default function Configuration() {
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="border p-2 rounded-md w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                className="border p-2 rounded-md w-full"
+                style={{
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
+                }}
               >
                 <option value="spices">Spices</option>
                 <option value="diet">Dietary Requirements</option>
@@ -191,24 +215,30 @@ export default function Configuration() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={`Enter ${category} item`}
-              className="border p-2 rounded-md w-full mb-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+              className="border p-2 rounded-md w-full mb-2"
+              style={{
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
+              }}
             />
 
             <button
               onClick={handleAddItem}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              className="px-4 py-2 rounded-md"
+              style={{ backgroundColor: "var(--primary)", color: "var(--text-primary)" }}
             >
               Add Item
             </button>
           </div>
+
           {/* Display Spices and Dietary Requirements */}
           <div className="mt-6">
-            <h2 className="text-lg font-bold">Spices</h2>
+            <h2 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>Spices</h2>
             <ul className="list-disc list-inside">
               {spices.length > 0 ? (
                 spices.map((item, index) => <li key={index}>{item}</li>)
               ) : (
-                <li>
+                <li style={{ color: "var(--text-secondary)" }}>
                   No spices added yet. (An empty list will assume all spices
                   available)
                 </li>
@@ -216,14 +246,14 @@ export default function Configuration() {
             </ul>
           </div>
           <div className="mt-6">
-            <h2 className="text-lg font-bold">Dietary Requirements</h2>
+            <h2 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>Dietary Requirements</h2>
             <ul className="list-disc list-inside">
               {dietaryRequirements.length > 0 ? (
                 dietaryRequirements.map((item, index) => (
                   <li key={index}>{item}</li>
                 ))
               ) : (
-                <li>No dietary requirements added yet.</li>
+                <li style={{ color: "var(--text-secondary)" }}>No dietary requirements added yet.</li>
               )}
             </ul>
           </div>

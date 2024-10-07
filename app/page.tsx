@@ -79,7 +79,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Banner Section */}
-      <header className="bg-blue-600 text-white p-4 fixed top-0 left-0 right-0 z-50">
+      <header className="p-4 fixed top-0 left-0 right-0 z-50" style={{ backgroundColor: "var(--primary)", color: "var(--text-primary)" }}>
         <div className="flex items-center justify-between px-4">
           <div className="flex items-center space-x-3">
             {/* Logo and Site Name */}
@@ -94,9 +94,9 @@ export default function Home() {
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? (
-              <XMarkIcon className="h-6 w-6" />
+              <XMarkIcon className="h-6 w-6" style={{ color: "var(--text-primary)" }} />
             ) : (
-              <Bars3Icon className="h-6 w-6" />
+              <Bars3Icon className="h-6 w-6" style={{ color: "var(--text-primary)" }} />
             )}
           </button>
         </div>
@@ -104,14 +104,21 @@ export default function Home() {
 
       <div className="flex">
         {/* Sidebar for Desktop */}
-        <aside className="hidden lg:block bg-gray-900 text-white fixed top-16 left-0 h-full w-64">
+        <aside
+          className="hidden lg:block fixed top-16 left-0 h-full w-64"
+          style={{ backgroundColor: "var(--sidebar)", color: "var(--text-primary)" }}
+        >
           <nav className="p-4">
             <ul>
               <li className="mb-4">
-                <Link href="/">Go to Home Page</Link>
+                <Link href="/configuration" className="hover:text-gray-300">
+                  Configuration
+                </Link>
               </li>
               <li className="mb-4">
-                <Link href="/settings">Go to Settings Page</Link>
+                <Link href="/settings" className="hover:text-gray-300">
+                  Settings
+                </Link>
               </li>
             </ul>
           </nav>
@@ -119,23 +126,28 @@ export default function Home() {
 
         {/* Mobile Menu */}
         {menuOpen && (
-          <aside className="lg:hidden bg-blue-700 text-white p-4 absolute top-16 left-0 w-full z-50">
+          <aside
+            className="lg:hidden p-4 absolute top-16 left-0 w-full z-50"
+            style={{ backgroundColor: "var(--primary)", color: "var(--text-primary)" }}
+          >
             <nav>
               <ul>
                 <li className="mb-4">
                   <Link
                     href="/configuration"
-                    className="hover:bg-blue-500 block px-4 py-2 rounded"
+                    className="block px-4 py-2 rounded"
+                    style={{ backgroundColor: "var(--secondary)", color: "var(--text-primary)" }}
                   >
-                    Go to Configuration Page
+                    Configuration
                   </Link>
                 </li>
                 <li className="mb-4">
                   <Link
                     href="/settings"
-                    className="hover:bg-blue-500 block px-4 py-2 rounded"
+                    className="block px-4 py-2 rounded"
+                    style={{ backgroundColor: "var(--secondary)", color: "var(--text-primary)" }}
                   >
-                    Go to Settings Page
+                    Settings
                   </Link>
                 </li>
               </ul>
@@ -144,8 +156,8 @@ export default function Home() {
         )}
 
         {/* Main Content */}
-        <main className="flex-grow p-8 mt-16 lg:ml-64"> {/* Add `mt-16` to account for the height of the top bar */}
-        <h1 className="text-2xl font-bold mb-4">Enter Fresh Ingredients</h1>
+        <main className="flex-grow p-8 mt-16 lg:ml-64">
+          <h1 className="text-2xl font-bold mb-4" style={{ color: "var(--foreground)" }}>Enter Fresh Ingredients</h1>
 
           {/* Input to add fresh ingredients */}
           <input
@@ -153,7 +165,8 @@ export default function Home() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Enter fresh ingredients (comma-separated)"
-            className="border p-2 rounded-md w-full mb-2 text-black"
+            className="border p-2 rounded-md w-full mb-2"
+            style={{ backgroundColor: "var(--background)", color: "var(--foreground)" }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleAddIngredient();
@@ -163,23 +176,25 @@ export default function Home() {
 
           <button
             onClick={handleAddIngredient}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md"
+            className="px-4 py-2 rounded-md"
+            style={{ backgroundColor: "var(--primary)", color: "var(--text-primary)" }}
           >
             Add Ingredient
           </button>
 
           {/* Ingredients Section */}
-          <h2 className="mt-4 text-lg font-bold">Ingredients</h2>
+          <h2 className="mt-4 text-lg font-bold" style={{ color: "var(--foreground)" }}>Ingredients</h2>
           <div className="mb-4">
-            <h3 className="font-semibold">Fresh Ingredients</h3>
+            <h3 className="font-semibold" style={{ color: "var(--foreground)" }}>Fresh Ingredients</h3>
             {ingredients.length > 0 ? (
               <ul className="list-disc list-inside">
                 {ingredients.map((ingredient, index) => (
                   <li key={index} className="flex items-center justify-between">
-                    <span>{ingredient}</span>
+                    <span style={{ color: "var(--foreground)" }}>{ingredient}</span>
                     <button
                       onClick={() => handleRemoveIngredient(index)}
-                      className="text-red-500 ml-4"
+                      className="ml-4"
+                      style={{ color: "var(--text-secondary)" }}
                     >
                       <TrashIcon className="h-5 w-5" />
                     </button>
@@ -187,21 +202,22 @@ export default function Home() {
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-500">No fresh ingredients added yet.</p>
+              <p className="text-gray-500" style={{ color: "var(--text-secondary)" }}>No fresh ingredients added yet.</p>
             )}
           </div>
 
           {/* Pantry Staples Section */}
           <div className="mb-4">
-            <h3 className="font-semibold">Pantry Staples</h3>
+            <h3 className="font-semibold" style={{ color: "var(--foreground)" }}>Pantry Staples</h3>
             {pantryItems.length > 0 ? (
               <ul className="list-disc list-inside">
                 {pantryItems.map((item, index) => (
                   <li key={index} className="flex items-center justify-between">
-                    <span>{item}</span>
+                    <span style={{ color: "var(--foreground)" }}>{item}</span>
                     <button
                       onClick={() => handleRemovePantryItem(item)}
-                      className="text-red-500 ml-4"
+                      className="ml-4"
+                      style={{ color: "var(--text-secondary)" }}
                     >
                       <TrashIcon className="h-5 w-5" />
                     </button>
@@ -209,22 +225,24 @@ export default function Home() {
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-500">No pantry staples added.</p>
+              <p className="text-gray-500" style={{ color: "var(--text-secondary)" }}>No pantry staples added.</p>
             )}
           </div>
 
           {/* Generate Recipe Button */}
           <button
             onClick={handleGenerateRecipe}
-            className="bg-green-500 text-white px-4 py-2 rounded-md mt-4 flex items-center justify-center"
+            className="px-4 py-2 rounded-md mt-4 flex items-center justify-center"
+            style={{ backgroundColor: "var(--primary)", color: "var(--text-primary)" }}
             disabled={loading}
           >
             {loading ? (
               <svg
-                className="animate-spin h-5 w-5 text-white mr-3"
+                className="animate-spin h-5 w-5 mr-3"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
+                style={{ color: "var(--text-primary)" }}
               >
                 <circle
                   className="opacity-25"
@@ -248,11 +266,11 @@ export default function Home() {
           {/* Display API Response */}
           {recipe && (
             <div className="mt-6">
-              <h2 className="text-lg font-bold">Generated Recipe:</h2>
-              <p className="mb-2">
+              <h2 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>Generated Recipe:</h2>
+              <p className="mb-2" style={{ color: "var(--foreground)" }}>
                 Here is a recipe based on your ingredients:
               </p>
-              <div className="bg-gray-100 p-4 rounded-md text-black">
+              <div className="p-4 rounded-md" style={{ backgroundColor: "var(--background)", color: "var(--foreground)" }}>
                 <h3 className="font-bold mb-2">{recipe.recipe}</h3>
 
                 {recipe.ingredients && (
