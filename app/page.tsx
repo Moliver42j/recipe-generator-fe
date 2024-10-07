@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useHome } from "./homeContext";
 import { useConfig } from "./configContext";
-import { TrashIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/solid';
+import { TrashIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 
 interface Recipe {
   recipe: string;
@@ -14,7 +14,8 @@ interface Recipe {
 
 export default function Home() {
   const { ingredients, setIngredients } = useHome();
-  const { pantryItems, setPantryItems, spices, dietaryRequirements } = useConfig();
+  const { pantryItems, setPantryItems, spices, dietaryRequirements } =
+    useConfig();
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
@@ -72,34 +73,42 @@ export default function Home() {
   };
 
   const handleRemovePantryItem = (item: string) => {
-    setPantryItems(pantryItems.filter(pantryItem => pantryItem !== item));
+    setPantryItems(pantryItems.filter((pantryItem) => pantryItem !== item));
   };
 
   return (
     <div className="flex flex-col min-h-screen">
       {/* Banner Section */}
-      <header className="bg-blue-600 text-white p-4">
-        <div className="container mx-auto flex items-center justify-between">
+      <header className="bg-blue-600 text-white p-4 fixed top-0 left-0 right-0 z-50">
+        <div className="flex items-center justify-between px-4">
           <div className="flex items-center space-x-3">
             {/* Logo and Site Name */}
-            <img src="/favicon.ico" alt="Logo" className="h-10" /> {/* Use favicon.ico as logo */}
+            <img src="/favicon.ico" alt="Logo" className="h-10" />{" "}
+            {/* Use favicon.ico as logo */}
             <h1 className="text-2xl font-bold">DishFromThis</h1>
           </div>
-          
+
           {/* Mobile Burger Menu */}
-          <button className="block lg:hidden" onClick={() => setMenuOpen(!menuOpen)}>
-            {menuOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
+          <button
+            className="block lg:hidden"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? (
+              <XMarkIcon className="h-6 w-6" />
+            ) : (
+              <Bars3Icon className="h-6 w-6" />
+            )}
           </button>
         </div>
       </header>
 
-      <div className="flex flex-grow">
+      <div className="flex">
         {/* Sidebar for Desktop */}
-        <aside className="hidden lg:block bg-gray-200 p-4 w-64">
-          <nav>
+        <aside className="hidden lg:block bg-gray-900 text-white fixed top-16 left-0 h-full w-64">
+          <nav className="p-4">
             <ul>
               <li className="mb-4">
-                <Link href="/configuration">Go to Configuration Page</Link>
+                <Link href="/">Go to Home Page</Link>
               </li>
               <li className="mb-4">
                 <Link href="/settings">Go to Settings Page</Link>
@@ -114,12 +123,18 @@ export default function Home() {
             <nav>
               <ul>
                 <li className="mb-4">
-                  <Link href="/configuration" className="hover:bg-blue-500 block px-4 py-2 rounded">
+                  <Link
+                    href="/configuration"
+                    className="hover:bg-blue-500 block px-4 py-2 rounded"
+                  >
                     Go to Configuration Page
                   </Link>
                 </li>
                 <li className="mb-4">
-                  <Link href="/settings" className="hover:bg-blue-500 block px-4 py-2 rounded">
+                  <Link
+                    href="/settings"
+                    className="hover:bg-blue-500 block px-4 py-2 rounded"
+                  >
                     Go to Settings Page
                   </Link>
                 </li>
@@ -129,8 +144,8 @@ export default function Home() {
         )}
 
         {/* Main Content */}
-        <main className="flex-grow p-4">
-          <h1 className="text-2xl font-bold mb-4">Enter Fresh Ingredients</h1>
+        <main className="flex-grow p-8 mt-16 lg:ml-64"> {/* Add `mt-16` to account for the height of the top bar */}
+        <h1 className="text-2xl font-bold mb-4">Enter Fresh Ingredients</h1>
 
           {/* Input to add fresh ingredients */}
           <input
@@ -146,7 +161,10 @@ export default function Home() {
             }}
           />
 
-          <button onClick={handleAddIngredient} className="bg-blue-500 text-white px-4 py-2 rounded-md">
+          <button
+            onClick={handleAddIngredient}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md"
+          >
             Add Ingredient
           </button>
 
@@ -231,7 +249,9 @@ export default function Home() {
           {recipe && (
             <div className="mt-6">
               <h2 className="text-lg font-bold">Generated Recipe:</h2>
-              <p className="mb-2">Here is a recipe based on your ingredients:</p>
+              <p className="mb-2">
+                Here is a recipe based on your ingredients:
+              </p>
               <div className="bg-gray-100 p-4 rounded-md text-black">
                 <h3 className="font-bold mb-2">{recipe.recipe}</h3>
 
