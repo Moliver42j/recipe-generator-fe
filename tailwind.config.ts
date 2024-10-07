@@ -10,13 +10,13 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        primary: "var(--primary)",
-        secondary: "var(--secondary)",
-        textPrimary: "var(--text-primary)",
-        textSecondary: "var(--text-secondary)",
-        sidebar: "var(--sidebar)",
+        background: "var(--background)", // Dynamic background color
+        foreground: "var(--foreground)", // Dynamic foreground text color
+        primary: "var(--primary)",       // Primary color from CSS variable
+        secondary: "var(--secondary)",   // Secondary color from CSS variable
+        textPrimary: "var(--text-primary)", // Primary text color
+        textSecondary: "var(--text-secondary)", // Secondary text color
+        sidebar: "var(--sidebar)",       // Sidebar background color
       },
     },
   },

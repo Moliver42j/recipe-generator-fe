@@ -3,23 +3,23 @@
 @tailwind utilities;
 
 :root {
-  --background-light: #D0E5C3;
-  --foreground-light: #355E3B;
-  --background-dark: #0a0a0a;
-  --foreground-dark: #ededed;
+  --background-light: #1E2D24; /* Dark green-gray background */
+  --foreground-light: #F1F3F0; /* Soft white text */
+  --background-dark: #121A16; /* Very dark green-black background */
+  --foreground-dark: #D1D9D3; /* Soft green-gray text */
 
   /* Default (light mode) color variables */
   --background: var(--background-light);
   --foreground: var(--foreground-light);
 
   /* Primary and secondary colors for light mode */
-  --primary-light: #355E3B; /* Dark Green */
-  --secondary-light: #A2D45E; /* Bright Green */
-  --text-primary-light: #3D3D3D; /* Dark Gray text */
-  --text-secondary-light: #6B7280; /* Gray text */
+  --primary-light: #2A5934; /* Rich forest green */
+  --secondary-light: #8FBF59; /* Bright green */
+  --text-primary-light: #E0E6DD; /* Light gray-green text */
+  --text-secondary-light: #A3ADA0; /* Muted green-gray text */
 
   /* Sidebar color for light mode */
-  --sidebar-light: #ffffff; /* White sidebar background */
+  --sidebar-light: #26362B; /* Deep green sidebar */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -28,13 +28,13 @@
     --foreground: var(--foreground-dark);
 
     /* Primary and secondary colors for dark mode */
-    --primary-dark: #6B8F71; /* Muted Dark Green */
-    --secondary-dark: #8FBF59; /* Softer Bright Green */
-    --text-primary-dark: #FFFFFF; /* White text */
-    --text-secondary-dark: #9CA3AF; /* Light gray text */
+    --primary-dark: #1D4A2A; /* Darker forest green */
+    --secondary-dark: #6D9F46; /* Softer bright green */
+    --text-primary-dark: #D1D9D3; /* Soft green-gray text */
+    --text-secondary-dark: #9CA3A0; /* Muted gray text */
 
     /* Sidebar color for dark mode */
-    --sidebar-dark: #6B8F71; /* Dark sidebar background */
+    --sidebar-dark: #17221B; /* Very dark green sidebar */
   }
 }
 
