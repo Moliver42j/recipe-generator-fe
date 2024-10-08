@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --background-light: #1E2D24; /* Dark green-gray background */
-  --foreground-light: #F1F3F0; /* Soft white text */
+  --background-light: #f9fff0; /* Dark green-gray background */
+  --foreground-light: #2c3b26; /* Soft white text */
   --background-dark: #16241B; /* Slightly lighter dark green-black background */
   --foreground-dark: #C8E2C6; /* Softer light green-gray text */
   
@@ -13,16 +13,16 @@
   --foreground: var(--foreground-light);
   
   /* Primary and secondary colors for light mode */
-  --primary-light: #2A5934; /* Rich forest green */
-  --secondary-light: #8FBF59; /* Bright green */
+  --primary-light: #2c3b26; /* Rich forest green */
+  --secondary-light: #2c3b26; /* Bright green */
   --text-primary-light: #E0E6DD; /* Light gray-green text */
-  --text-secondary-light: #A3ADA0; /* Muted green-gray text */
+  --text-secondary-light: #22251f; /* Muted green-gray text */
   
   /* Sidebar color for light mode */
   --sidebar-light: #26362B; /* Deep green sidebar */
   
   /* Banner color for light mode */
-  --banner-light: #2A5934; /* Same as primary color for the banner */
+  --banner-light: #45523e; /* Same as primary color for the banner */
 }
 
 #root, #__next {
@@ -31,20 +31,20 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #16241B;
-    --foreground: #C8E2C6;
+    --background: #22251f;
+    --foreground: #f4faec;
 
     /* Primary and secondary colors for dark mode */
-    --primary: #24513D; /* Darker forest green */
+    --primary: #a4b794; /* Darker forest green */
     --secondary: #5F9463; /* Softer bright green */
-    --text-primary: #D5E6D3; /* Softer greenish-gray text */
-    --text-secondary: #9CA8A0; /* Muted gray text */
+    --text-primary: #f4faec; /* Softer greenish-gray text */
+    --text-secondary: #c5ccc0; /* Muted gray text */
 
     /* Sidebar color for dark mode */
-    --sidebar: #1B3526; /* Slightly lighter dark green */
+    --sidebar: #a4b794; /* Slightly lighter dark green */
 
     /* Banner color for dark mode */
-    --banner: #24513D; /* Same as primary-dark for the banner */
+    --banner: #45523e; /* Same as primary-dark for the banner */
   }
 }
 
