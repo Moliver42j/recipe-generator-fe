@@ -115,7 +115,7 @@ export default function Configuration() {
                 <li className="mb-4">
                   <Link
                     href="/"
-                    className="block px-4 py-2 rounded bg-secondary text-textPrimary"
+                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
                   >
                     Home
                   </Link>
@@ -123,7 +123,7 @@ export default function Configuration() {
                 <li className="mb-4">
                   <Link
                     href="/settings"
-                    className="block px-4 py-2 rounded bg-secondary text-textPrimary"
+                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
                   >
                     Settings
                   </Link>
@@ -145,11 +145,11 @@ export default function Configuration() {
               value={pantryInput} // Bind to state variable
               onChange={(e) => setPantryInput(e.target.value)} // Update state on input change
               placeholder="Enter pantry item"
-              className="border p-2 rounded-md w-full mb-2 bg-background text-foreground"
+              className="border-solid shadow-lg p-2 rounded-md w-full mb-2 bg-background text-foreground"
             />
             <button
               onClick={handleAddPantryItem}
-              className="px-4 py-2 rounded-md w-full bg-secondary text-textPrimary"
+              className="px-4 py-2 rounded-md w-full bg-secondary text-textPrimary shadow-lg"
             >
               Add Pantry Item
             </button>
@@ -193,12 +193,12 @@ export default function Configuration() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={`Enter ${category} item`}
-              className="border p-2 rounded-md w-full mb-2 bg-background text-foreground"
+              className="border p-2 shadow-lg rounded-md w-full mb-2 bg-background text-foreground"
             />
 
             <button
               onClick={handleAddItem}
-              className="px-4 py-2 rounded-md bg-secondary text-textPrimary"
+              className="px-4 py-2 rounded-md bg-secondary text-textPrimary shadow-lg"
             >
               Add Item
             </button>

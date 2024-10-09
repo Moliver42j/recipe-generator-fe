@@ -94,7 +94,7 @@ export default function Home() {
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? (
-              <XMarkIcon className="h-6 w-6 text-textPrimary" />
+              <XMarkIcon className="h-6 w-6 text-textPrimary " />
             ) : (
               <Bars3Icon className="h-6 w-6 text-textPrimary" />
             )}
@@ -129,7 +129,7 @@ export default function Home() {
                 <li className="mb-4">
                   <Link
                     href="/configuration"
-                    className="block px-4 py-2 rounded bg-secondary text-textPrimary"
+                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
                   >
                     Configuration
                   </Link>
@@ -137,7 +137,7 @@ export default function Home() {
                 <li className="mb-4">
                   <Link
                     href="/settings"
-                    className="block px-4 py-2 rounded bg-secondary text-textPrimary"
+                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
                   >
                     Settings
                   </Link>
@@ -157,7 +157,7 @@ export default function Home() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Enter fresh ingredients (comma-separated)"
-            className="border p-2 rounded-md w-full mb-2 bg-background text-foreground"
+            className="border p-2 shadow-lg rounded-md w-full mb-2 bg-background text-foreground"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleAddIngredient();
@@ -167,7 +167,7 @@ export default function Home() {
 
           <button
             onClick={handleAddIngredient}
-            className="px-4 py-2 rounded-md bg-secondary text-textPrimary"
+            className="px-4 py-2 rounded-md bg-secondary text-textPrimary shadow-lg"
           >
             Add Ingredient
           </button>
@@ -220,7 +220,7 @@ export default function Home() {
           {/* Generate Recipe Button */}
           <button
             onClick={handleGenerateRecipe}
-            className="px-4 py-2 rounded-md mt-4 flex items-center justify-center bg-secondary text-textPrimary"
+            className="px-4 py-2 rounded-md mt-4 flex items-center justify-center bg-secondary text-textPrimary shadow-lg"
             disabled={loading}
           >
             {loading ? (
