@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useConfig } from "../configContext";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid"; // Import icons
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid"; 
+import Logo from "../assets/favicon-96x96.png";
 
 export default function Configuration() {
   const {
@@ -68,7 +69,7 @@ export default function Configuration() {
         <div className="flex items-center justify-between px-4">
           <div className="flex items-center space-x-3">
             {/* Logo and Site Name */}
-            <img src="/favicon.ico" alt="Logo" className="h-10" />{" "}
+            <img src = {"/assets/favicon-96x96.png"} alt="Logo" className="h-10" />{" "}
             {/* Use favicon.ico as logo */}
             <h1 className="text-2xl font-bold">DishFromThis</h1>
           </div>
