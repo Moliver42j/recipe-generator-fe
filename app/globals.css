@@ -3,48 +3,44 @@
 @tailwind utilities;
 
 :root {
-  --background-light: #f9fff0; /* Dark green-gray background */
-  --foreground-light: #2c3b26; /* Soft white text */
-  --background-dark: #16241B; /* Slightly lighter dark green-black background */
-  --foreground-dark: #C8E2C6; /* Softer light green-gray text */
+  --background-light: #f9fff0;
+  --foreground-light: #2c3b26;
+  --background-dark: #121a13; 
+  --foreground-dark: #d3e4d1; 
   
   /* Default (light mode) color variables */
   --background: var(--background-light);
   --foreground: var(--foreground-light);
   
   /* Primary and secondary colors for light mode */
-  --primary-light: #2c3b26; /* Rich forest green */
-  --secondary-light: #2c3b26; /* Bright green */
-  --text-primary-light: #E0E6DD; /* Light gray-green text */
-  --text-secondary-light: #22251f; /* Muted green-gray text */
+  --primary-light: #2c3b26;
+  --secondary-light: #2c3b26; 
+  --text-primary-light: #E0E6DD; 
+  --text-secondary-light: #22251f;
   
   /* Sidebar color for light mode */
-  --sidebar-light: #26362B; /* Deep green sidebar */
+  --sidebar-light: #26362B;
   
   /* Banner color for light mode */
   --banner-light: #45523e; /* Same as primary color for the banner */
 }
 
 #root, #__next {
-  height: 100%; /* Ensure the Next.js container takes up full height */
+  height: 100%;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #22251f;
-    --foreground: #f4faec;
+    --background: #121a13; /* Very dark greenish background */
+    --foreground: #d3e4d1; /* Soft, pale green for text */
 
-    /* Primary and secondary colors for dark mode */
-    --primary: #c4d9b3; /* Darker forest green */
-    --secondary: #5F9463; /* Softer bright green */
-    --text-primary: #f4faec; /* Softer greenish-gray text */
-    --text-secondary: #c5ccc0; /* Muted gray text */
+    --primary: #8fae86; /* Muted earthy green for primary elements */
+    --secondary: #ccb9dd; /* Slightly darker secondary green */
+    --text-primary: #323331; /* Pale text for readability */
+    --text-secondary: #a9b8a3; /* Subtle muted secondary text */
 
-    /* Sidebar color for dark mode */
-    --sidebar: #26362B; /* Slightly lighter dark green */
-
-    /* Banner color for dark mode */
-    --banner: #45523e; /* Same as primary-dark for the banner */
+    --sidebar: #1a2a20; /* Dark, desaturated green for the sidebar */
+    --banner: #26362b; /* Dark green for the banner, matching the light mode but darker */
   }
 }
 

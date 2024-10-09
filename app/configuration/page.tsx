@@ -149,7 +149,7 @@ export default function Configuration() {
             />
             <button
               onClick={handleAddPantryItem}
-              className="px-4 py-2 rounded-md w-full bg-primary text-textPrimary"
+              className="px-4 py-2 rounded-md w-full bg-secondary text-textPrimary"
             >
               Add Pantry Item
             </button>
@@ -198,7 +198,7 @@ export default function Configuration() {
 
             <button
               onClick={handleAddItem}
-              className="px-4 py-2 rounded-md bg-primary text-textPrimary"
+              className="px-4 py-2 rounded-md bg-secondary text-textPrimary"
             >
               Add Item
             </button>

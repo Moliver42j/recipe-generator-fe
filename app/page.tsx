@@ -104,7 +104,7 @@ export default function Home() {
 
       <div className="flex">
         {/* Sidebar for Desktop */}
-        <aside className="hidden lg:block fixed top-16 left-0 h-full w-64 bg-sidebar text-textPrimary">
+        <aside className="hidden lg:block fixed top-16 left-0 h-full w-64 bg-sidebar text-textSecondary">
           <nav className="p-4">
             <ul>
               <li className="mb-4">
@@ -167,7 +167,7 @@ export default function Home() {
 
           <button
             onClick={handleAddIngredient}
-            className="px-4 py-2 rounded-md bg-primary text-textPrimary"
+            className="px-4 py-2 rounded-md bg-secondary text-textPrimary"
           >
             Add Ingredient
           </button>
@@ -220,7 +220,7 @@ export default function Home() {
           {/* Generate Recipe Button */}
           <button
             onClick={handleGenerateRecipe}
-            className="px-4 py-2 rounded-md mt-4 flex items-center justify-center bg-primary text-textPrimary"
+            className="px-4 py-2 rounded-md mt-4 flex items-center justify-center bg-secondary text-textPrimary"
             disabled={loading}
           >
             {loading ? (
