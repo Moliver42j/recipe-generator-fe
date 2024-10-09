@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { useConfig } from "../configContext";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid"; 
-import Logo from "../assets/favicon-96x96.png";
 
 export default function Configuration() {
   const {
