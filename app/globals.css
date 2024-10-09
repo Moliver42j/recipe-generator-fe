@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --background-light: #f9fff0;
+  --background-light: #e8e9e7;
   --foreground-light: #2c3b26;
   --background-dark: #121a13; 
-  --foreground-dark: #d3e4d1; 
+  --foreground-dark: #e8e9e7; 
   
   /* Default (light mode) color variables */
   --background: var(--background-light);
@@ -14,7 +14,7 @@
   
   /* Primary and secondary colors for light mode */
   --primary-light: #2c3b26;
-  --secondary-light: #2c3b26; 
+  --secondary-light: #35263b; 
   --text-primary-light: #E0E6DD; 
   --text-secondary-light: #22251f;
   
@@ -35,8 +35,8 @@
     --foreground: #d3e4d1; /* Soft, pale green for text */
 
     --primary: #8fae86; /* Muted earthy green for primary elements */
-    --secondary: #ccb9dd; /* Slightly darker secondary green */
-    --text-primary: #323331; /* Pale text for readability */
+    --secondary: #9789a4; /* Slightly darker secondary green */
+    --text-primary: ##b9d6dd; /* Pale text for readability */
     --text-secondary: #a9b8a3; /* Subtle muted secondary text */
 
     --sidebar: #1a2a20; /* Dark, desaturated green for the sidebar */
