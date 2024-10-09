@@ -83,7 +83,7 @@ export default function Home() {
         <div className="flex items-center justify-between px-4">
           <div className="flex items-center space-x-3">
             {/* Logo and Site Name */}
-            <img src="/favicon.ico" alt="Logo" className="h-10" />{" "}
+            <img src="/media/favicon.ico" alt="Logo" className="h-10" />{" "}
             {/* Use favicon.ico as logo */}
             <h1 className="text-2xl font-bold">DishFromThis</h1>
           </div>
