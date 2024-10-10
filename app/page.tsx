@@ -1,12 +1,11 @@
 "use client"; // Ensure this is a client component
 
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useHome } from "./homeContext";
 import { useConfig } from "./configContext";
 import { TrashIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import { getFromLocalStorage, saveToLocalStorage } from "./utils/storageUtils";
-
 
 interface Recipe {
   recipe: string;
@@ -17,8 +16,7 @@ interface Recipe {
 
 export default function Home() {
   const { ingredients, setIngredients } = useHome();
-  const { pantryItems, setPantryItems, spices, dietaryRequirements } =
-    useConfig();
+  const { pantryItems, setPantryItems, spices, dietaryRequirements, pantryItemStatus, setPantryItemStatus } = useConfig();
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
@@ -28,11 +26,12 @@ export default function Home() {
   useEffect(() => {
     const cachedIngredients = getFromLocalStorage("ingredients");
     const cachedPantryItems = getFromLocalStorage("pantryItems");
-    const cachedSpices = getFromLocalStorage("spices");
+    const cachedPantryStatus = getFromLocalStorage("pantryItemStatus");
 
     if (cachedIngredients) setIngredients(cachedIngredients);
     if (cachedPantryItems) setPantryItems(cachedPantryItems);
-  }, [setIngredients, setPantryItems]);
+    if (cachedPantryStatus) setPantryItemStatus(cachedPantryStatus);
+  }, [setIngredients, setPantryItems, setPantryItemStatus]);
 
   const handleAddIngredient = () => {
     if (input.trim() !== "") {
@@ -48,8 +47,12 @@ export default function Home() {
     setLoading(true);
     setRecipe(null);
 
+    // Only include pantry items that have a status of true
+    const tickedPantryItems = pantryItems.filter((item) => pantryItemStatus[item]);
+
     const payload = {
-      ingredients: [...ingredients, ...pantryItems],
+      ingredients: [...ingredients],
+      pantryItems: tickedPantryItems, // Only ticked items are sent
       spices: spices.length === 0 ? "all" : spices,
       dietaryRestrictions: dietaryRequirements,
     };
@@ -92,10 +95,11 @@ export default function Home() {
     saveToLocalStorage("ingredients", updatedIngredients); // Cache the updated ingredients
   };
 
+  // Instead of removing the pantry item, set its status to false
   const handleRemovePantryItem = (item: string) => {
-    const updatedPantryItems = pantryItems.filter((pantryItem) => pantryItem !== item);
-    setPantryItems(updatedPantryItems);
-    saveToLocalStorage("pantryItems", updatedPantryItems); // Cache the updated pantry items
+    const updatedStatus = { ...pantryItemStatus, [item]: false };
+    setPantryItemStatus(updatedStatus);
+    saveToLocalStorage("pantryItemStatus", updatedStatus); // Cache the updated pantry item status
   };
 
   return (
@@ -109,8 +113,7 @@ export default function Home() {
               src={"/assets/favicon-96x96.png"}
               alt="Logo"
               className="h-10"
-            />{" "}
-            {/* Use favicon.ico as logo */}
+            />
             <h1 className="text-2xl font-bold">DishFromThis</h1>
           </div>
 
@@ -138,11 +141,6 @@ export default function Home() {
                   Configuration
                 </Link>
               </li>
-              {/* <li className="mb-4">
-                <Link href="/settings" className="hover:text-gray-300">
-                  Settings
-                </Link>
-              </li> */}
             </ul>
           </nav>
         </aside>
@@ -160,14 +158,6 @@ export default function Home() {
                     Configuration
                   </Link>
                 </li>
-                {/* <li className="mb-4">
-                  <Link
-                    href="/settings"
-                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
-                  >
-                    Settings
-                  </Link>
-                </li> */}
               </ul>
             </nav>
           </aside>
@@ -217,19 +207,18 @@ export default function Home() {
                 ))}
               </ul>
             ) : (
-              <p className="text-textSecondary">
-                No fresh ingredients added yet.
-              </p>
+              <p className="text-textSecondary">No fresh ingredients added yet.</p>
             )}
           </div>
 
           {/* Pantry Staples Section */}
           <div className="mb-4">
             <h3 className="font-semibold">Pantry Staples</h3>
-            {pantryItems.length > 0 ? (
-              <ul className="list-disc list-inside">
-                {pantryItems.map((item, index) => (
-                  <li key={index} className="flex items-center justify-between">
+            {pantryItems
+              .filter((item) => pantryItemStatus[item]) // Only show pantry items where the status is true
+              .map((item, index) => (
+                <ul className="list-disc list-inside" key={index}>
+                  <li className="flex items-center justify-between">
                     <span>{item}</span>
                     <button
                       onClick={() => handleRemovePantryItem(item)}
@@ -238,9 +227,9 @@ export default function Home() {
                       <TrashIcon className="h-5 w-5" />
                     </button>
                   </li>
-                ))}
-              </ul>
-            ) : (
+                </ul>
+              ))}
+            {pantryItems.filter((item) => pantryItemStatus[item]).length === 0 && (
               <p className="text-textSecondary">No pantry staples added.</p>
             )}
           </div>
@@ -309,15 +298,6 @@ export default function Home() {
           )}
         </main>
       </div>
-      {/* Footer Section
-        <footer className="bg-primary text-textPrimary py-4 w-100 bottom-0 left-0">
-            <div className="text-center">
-              <p className="text-sm">
-                &copy; {new Date().getFullYear()} DishFromThis. All rights reserved.
-              </p>
-              <p className="text-sm">dishfromthis.com</p>
-            </div>
-        </footer> */}
     </div>
   );
 }

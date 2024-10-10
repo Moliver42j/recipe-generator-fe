@@ -3,13 +3,15 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useConfig } from "../configContext";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
+import { TrashIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import { getFromLocalStorage, saveToLocalStorage } from "../utils/storageUtils";
 
 export default function Configuration() {
   const {
     pantryItems,
     setPantryItems,
+    pantryItemStatus,
+    setPantryItemStatus,
     spices,
     setSpices,
     dietaryRequirements,
@@ -17,56 +19,60 @@ export default function Configuration() {
   } = useConfig();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Keep a full list of all possible pantry items (both ticked and unticked)
-  const [allPantryItems, setAllPantryItems] = useState<string[]>([]);
-
   // State to handle adding custom pantry items
   const [pantryInput, setPantryInput] = useState("");
 
   // Load cached data on component mount
   useEffect(() => {
     const cachedPantryItems = getFromLocalStorage("pantryItems");
+    const cachedPantryItemStatus = getFromLocalStorage("pantryItemStatus");
     const cachedSpices = getFromLocalStorage("spices");
     const cachedDietaryRequirements = getFromLocalStorage("dietaryRequirements");
 
-    if (cachedPantryItems) {
-      setPantryItems(cachedPantryItems);
-      setAllPantryItems(cachedPantryItems);
-    }
-    if (cachedSpices) {
-      setSpices(cachedSpices);
-    }
-    if (cachedDietaryRequirements) {
-      setDietaryRequirements(cachedDietaryRequirements);
-    }
-  }, [setPantryItems, setSpices, setDietaryRequirements]);
+    if (cachedPantryItems) setPantryItems(cachedPantryItems);
+    if (cachedPantryItemStatus) setPantryItemStatus(cachedPantryItemStatus);
+    if (cachedSpices) setSpices(cachedSpices);
+    if (cachedDietaryRequirements) setDietaryRequirements(cachedDietaryRequirements);
+  }, [setPantryItems, setPantryItemStatus, setSpices, setDietaryRequirements]);
 
   // Handle checkbox toggle for pantry items
   const handleCheckboxChange = (item: string) => {
-    let updatedPantryItems;
-    if (pantryItems.includes(item)) {
-      updatedPantryItems = pantryItems.filter((pantryItem) => pantryItem !== item);
-    } else {
-      updatedPantryItems = [...pantryItems, item];
-    }
-    setPantryItems(updatedPantryItems);
-    saveToLocalStorage("pantryItems", updatedPantryItems);
+    const updatedStatus = { ...pantryItemStatus, [item]: !pantryItemStatus[item] };
+    setPantryItemStatus(updatedStatus);
+    saveToLocalStorage("pantryItemStatus", updatedStatus);
   };
 
   // Handle adding custom pantry item
   const handleAddPantryItem = () => {
     if (pantryInput.trim() === "") return;
-    if (!allPantryItems.includes(pantryInput)) {
-      const updatedAllPantryItems = [...allPantryItems, pantryInput];
-      setAllPantryItems(updatedAllPantryItems);
-      saveToLocalStorage("pantryItems", updatedAllPantryItems);
-    }
     if (!pantryItems.includes(pantryInput)) {
       const updatedPantryItems = [...pantryItems, pantryInput];
       setPantryItems(updatedPantryItems);
+      setPantryItemStatus({ ...pantryItemStatus, [pantryInput]: true }); // New item is checked by default
       saveToLocalStorage("pantryItems", updatedPantryItems);
+      saveToLocalStorage("pantryItemStatus", { ...pantryItemStatus, [pantryInput]: true });
     }
     setPantryInput(""); // Clear input after adding
+  };
+
+  // Handle removing pantry item by setting its status to false (Hide from list)
+  const handleRemovePantryItem = (item: string) => {
+    const updatedStatus = { ...pantryItemStatus, [item]: false };
+    setPantryItemStatus(updatedStatus);
+    saveToLocalStorage("pantryItemStatus", updatedStatus);
+  };
+
+  // Completely delete pantry item from the list and cached memory
+  const handleDeletePantryItem = (item: string) => {
+    const updatedPantryItems = pantryItems.filter((pantryItem) => pantryItem !== item);
+    const updatedStatus = { ...pantryItemStatus };
+    delete updatedStatus[item]; // Remove the status for this item
+
+    setPantryItems(updatedPantryItems);
+    setPantryItemStatus(updatedStatus);
+
+    saveToLocalStorage("pantryItems", updatedPantryItems); // Update the cached pantry items
+    saveToLocalStorage("pantryItemStatus", updatedStatus); // Update the cached status
   };
 
   const [input, setInput] = useState("");
@@ -96,20 +102,12 @@ export default function Configuration() {
         <div className="flex items-center justify-between px-4">
           <div className="flex items-center space-x-3">
             {/* Logo and Site Name */}
-            <img
-              src={"/assets/favicon-96x96.png"}
-              alt="Logo"
-              className="h-10"
-            />{" "}
-            {/* Use favicon.ico as logo */}
+            <img src={"/assets/favicon-96x96.png"} alt="Logo" className="h-10" />{" "}
             <h1 className="text-2xl font-bold">DishFromThis</h1>
           </div>
 
           {/* Mobile Burger Menu */}
-          <button
-            className="block lg:hidden"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
+          <button className="block lg:hidden" onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? (
               <XMarkIcon className="h-6 w-6 text-textPrimary" />
             ) : (
@@ -125,15 +123,8 @@ export default function Configuration() {
           <nav className="p-4">
             <ul>
               <li className="mb-4">
-                <Link href="/" className="hover:text-gray-300">
-                  Home
-                </Link>
+                <Link href="/" className="hover:text-gray-300">Home</Link>
               </li>
-              {/* <li className="mb-4">
-                <Link href="/settings" className="hover:text-gray-300">
-                  Settings
-                </Link>
-              </li> */}
             </ul>
           </nav>
         </aside>
@@ -144,21 +135,10 @@ export default function Configuration() {
             <nav>
               <ul>
                 <li className="mb-4">
-                  <Link
-                    href="/"
-                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
-                  >
+                  <Link href="/" className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg">
                     Home
                   </Link>
                 </li>
-                {/* <li className="mb-4">
-                  <Link
-                    href="/settings"
-                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
-                  >
-                    Settings
-                  </Link>
-                </li> */}
               </ul>
             </nav>
           </aside>
@@ -166,51 +146,55 @@ export default function Configuration() {
 
         {/* Main Content */}
         <main className="flex-grow p-8 mt-16 lg:ml-64">
-          <h1 className="text-2xl font-bold mb-4">
-            Configure Your Ingredients
-          </h1>
+          <h1 className="text-2xl font-bold mb-4">Configure Your Ingredients</h1>
 
           {/* Add Custom Pantry Item */}
           <div className="mt-6">
             <h2 className="text-lg font-bold">Add Pantry Item</h2>
             <input
               type="text"
-              value={pantryInput} // Bind to state variable
-              onChange={(e) => setPantryInput(e.target.value)} // Update state on input change
+              value={pantryInput}
+              onChange={(e) => setPantryInput(e.target.value)}
               placeholder="Enter pantry item"
               className="border-solid shadow-lg p-2 rounded-md w-full mb-2 bg-background text-foreground"
             />
-            <button
-              onClick={handleAddPantryItem}
-              className="px-4 py-2 rounded-md w-full bg-secondary text-textPrimary shadow-lg"
-            >
+            <button onClick={handleAddPantryItem} className="px-4 py-2 rounded-md w-full bg-secondary text-textPrimary shadow-lg">
               Add Pantry Item
             </button>
           </div>
 
-          {/* Pantry Staples with Checkboxes */}
+          {/* Pantry Staples with Checkboxes and Delete Buttons */}
           <div className="mt-6">
             <h2 className="text-lg font-bold">Pantry Items</h2>
             <div className="grid grid-cols-2 gap-4">
-              {allPantryItems.map((item, index) => (
-                <label key={index} className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={pantryItems.includes(item)}
-                    onChange={() => handleCheckboxChange(item)}
-                    className="form-checkbox h-5 w-5 text-primary"
-                  />
-                  <span>{item}</span>
-                </label>
+              {pantryItems.map((item, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={!!pantryItemStatus[item]}
+                      onChange={() => handleCheckboxChange(item)}
+                      className="form-checkbox h-5 w-5 text-primary"
+                    />
+                    <span>{item}</span>
+                  </label>
+                  <button
+                    onClick={() => handleDeletePantryItem(item)}
+                    className="text-textSecondary hover:text-red-600"
+                  >
+                    <TrashIcon className="h-5 w-5" />
+                  </button>
+                </div>
               ))}
+              {pantryItems.length === 0 && (
+                <p className="text-textSecondary">No pantry items available.</p>
+              )}
             </div>
           </div>
 
           {/* Spices and Dietary Requirements */}
           <div className="mt-6">
-            <h2 className="text-lg font-bold">
-              Add Spices or Dietary Requirements
-            </h2>
+            <h2 className="text-lg font-bold">Add Spices or Dietary Requirements</h2>
 
             <div className="mb-4">
               <select
@@ -231,10 +215,7 @@ export default function Configuration() {
               className="border p-2 shadow-lg rounded-md w-full mb-2 bg-background text-foreground"
             />
 
-            <button
-              onClick={handleAddItem}
-              className="px-4 py-2 rounded-md bg-secondary text-textPrimary shadow-lg"
-            >
+            <button onClick={handleAddItem} className="px-4 py-2 rounded-md bg-secondary text-textPrimary shadow-lg">
               Add Item
             </button>
           </div>
@@ -246,10 +227,7 @@ export default function Configuration() {
               {spices.length > 0 ? (
                 spices.map((item, index) => <li key={index}>{item}</li>)
               ) : (
-                <li className="text-textSecondary">
-                  No spices added yet. (An empty list will assume all spices
-                  available)
-                </li>
+                <li className="text-textSecondary">No spices added yet.</li>
               )}
             </ul>
           </div>
@@ -258,27 +236,13 @@ export default function Configuration() {
             <h2 className="text-lg font-bold">Dietary Requirements</h2>
             <ul className="list-disc list-inside">
               {dietaryRequirements.length > 0 ? (
-                dietaryRequirements.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))
+                dietaryRequirements.map((item, index) => <li key={index}>{item}</li>)
               ) : (
-                <li className="text-textSecondary">
-                  No dietary requirements added yet.
-                </li>
+                <li className="text-textSecondary">No dietary requirements added yet.</li>
               )}
             </ul>
           </div>
         </main>
-      
-        {/* Footer Section
-        <footer className="bg-primary text-textPrimary py-4 w-100 bottom-0 left-0">
-            <div className="text-center">
-              <p className="text-sm">
-                &copy; {new Date().getFullYear()} DishFromThis. All rights reserved.
-              </p>
-              <p className="text-sm">dishfromthis.com</p>
-            </div>
-        </footer> */}
       </div>
     </div>
   );

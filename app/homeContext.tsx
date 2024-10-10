@@ -1,7 +1,7 @@
-// homeContext.tsx
 "use client"; // Ensure this is a client component
 
-import { createContext, useState, ReactNode, useContext } from 'react';
+import { createContext, useState, useEffect, ReactNode, useContext } from 'react';
+import { getFromLocalStorage, saveToLocalStorage } from './utils/storageUtils'; // Import storage utils
 
 // Define the type for the HomeContext data
 interface HomeContextType {
@@ -14,6 +14,21 @@ const HomeContext = createContext<HomeContextType | null>(null);
 
 export const HomeProvider = ({ children }: { children: ReactNode }) => {
   const [ingredients, setIngredients] = useState<string[]>([]);
+
+  // Load cached ingredients from local storage on component mount
+  useEffect(() => {
+    const cachedIngredients = getFromLocalStorage("ingredients");
+    if (cachedIngredients) {
+      setIngredients(cachedIngredients);
+    }
+  }, []);
+
+  // Save ingredients to local storage whenever they change
+  useEffect(() => {
+    if (ingredients.length > 0) {
+      saveToLocalStorage("ingredients", ingredients);
+    }
+  }, [ingredients]);
 
   return (
     <HomeContext.Provider value={{ ingredients, setIngredients }}>
