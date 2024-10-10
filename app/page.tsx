@@ -138,11 +138,11 @@ export default function Home() {
                   Configuration
                 </Link>
               </li>
-              <li className="mb-4">
+              {/* <li className="mb-4">
                 <Link href="/settings" className="hover:text-gray-300">
                   Settings
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </nav>
         </aside>
@@ -160,14 +160,14 @@ export default function Home() {
                     Configuration
                   </Link>
                 </li>
-                <li className="mb-4">
+                {/* <li className="mb-4">
                   <Link
                     href="/settings"
                     className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
                   >
                     Settings
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </nav>
           </aside>
