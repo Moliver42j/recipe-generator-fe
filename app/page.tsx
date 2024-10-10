@@ -57,9 +57,9 @@ export default function Home() {
 
       const result = await response.json();
       const recipeData: Recipe = JSON.parse(result.body);
-      if (recipeData.error)
-      {
-        recipeData.recipe = 'No recipe found for chosen ingredients. \nTry adding more ingredients or changing your dietary restrictions.';
+      if (recipeData.error) {
+        recipeData.recipe =
+          "No recipe found for chosen ingredients. \nTry adding more ingredients or changing your dietary restrictions.";
       }
       setRecipe(recipeData);
     } catch (error) {
@@ -88,7 +88,11 @@ export default function Home() {
         <div className="flex items-center justify-between px-4">
           <div className="flex items-center space-x-3">
             {/* Logo and Site Name */}
-            <img src = {"/assets/favicon-96x96.png"} alt="Logo" className="h-10" />{" "}
+            <img
+              src={"/assets/favicon-96x96.png"}
+              alt="Logo"
+              className="h-10"
+            />{" "}
             {/* Use favicon.ico as logo */}
             <h1 className="text-2xl font-bold">DishFromThis</h1>
           </div>
@@ -153,7 +157,7 @@ export default function Home() {
         )}
 
         {/* Main Content */}
-        <main className="flex-grow p-8 mt-16 lg:ml-64">
+        <main className="flex-grow p-8 mt-16 lg:ml-64 mb-16">
           <h1 className="text-2xl font-bold mb-4">Enter Fresh Ingredients</h1>
 
           {/* Input to add fresh ingredients */}
@@ -196,7 +200,9 @@ export default function Home() {
                 ))}
               </ul>
             ) : (
-              <p className="text-textSecondary">No fresh ingredients added yet.</p>
+              <p className="text-textSecondary">
+                No fresh ingredients added yet.
+              </p>
             )}
           </div>
 
@@ -258,7 +264,9 @@ export default function Home() {
           {recipe && (
             <div className="mt-6">
               <h2 className="text-lg font-bold">Generated Recipe:</h2>
-              <p className="mb-2">Here is a recipe based on your ingredients:</p>
+              <p className="mb-2">
+                Here is a recipe based on your ingredients:
+              </p>
               <div className="p-4 rounded-md bg-background text-foreground">
                 <h3 className="font-bold mb-2">{recipe.recipe}</h3>
 
@@ -284,6 +292,13 @@ export default function Home() {
           )}
         </main>
       </div>
+      {/* Footer Section */}
+      <footer className="bg-primary text-textPrimary py-4 mt-auto w-full fixed bottom-0 left-0">
+        <div className="text-center">
+          <p className="text-sm">&copy; {new Date().getFullYear()} DishFromThis. All rights reserved.</p>
+          <p className="text-sm">DishFromThis.com</p>
+        </div>
+      </footer>
     </div>
   );
 }
