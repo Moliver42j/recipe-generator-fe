@@ -27,17 +27,23 @@ export default function Configuration() {
     const cachedPantryItems = getFromLocalStorage("pantryItems");
     const cachedPantryItemStatus = getFromLocalStorage("pantryItemStatus");
     const cachedSpices = getFromLocalStorage("spices");
-    const cachedDietaryRequirements = getFromLocalStorage("dietaryRequirements");
+    const cachedDietaryRequirements = getFromLocalStorage(
+      "dietaryRequirements"
+    );
 
     if (cachedPantryItems) setPantryItems(cachedPantryItems);
     if (cachedPantryItemStatus) setPantryItemStatus(cachedPantryItemStatus);
     if (cachedSpices) setSpices(cachedSpices);
-    if (cachedDietaryRequirements) setDietaryRequirements(cachedDietaryRequirements);
+    if (cachedDietaryRequirements)
+      setDietaryRequirements(cachedDietaryRequirements);
   }, [setPantryItems, setPantryItemStatus, setSpices, setDietaryRequirements]);
 
   // Handle checkbox toggle for pantry items
   const handleCheckboxChange = (item: string) => {
-    const updatedStatus = { ...pantryItemStatus, [item]: !pantryItemStatus[item] };
+    const updatedStatus = {
+      ...pantryItemStatus,
+      [item]: !pantryItemStatus[item],
+    };
     setPantryItemStatus(updatedStatus);
     saveToLocalStorage("pantryItemStatus", updatedStatus);
   };
@@ -50,7 +56,10 @@ export default function Configuration() {
       setPantryItems(updatedPantryItems);
       setPantryItemStatus({ ...pantryItemStatus, [pantryInput]: true }); // New item is checked by default
       saveToLocalStorage("pantryItems", updatedPantryItems);
-      saveToLocalStorage("pantryItemStatus", { ...pantryItemStatus, [pantryInput]: true });
+      saveToLocalStorage("pantryItemStatus", {
+        ...pantryItemStatus,
+        [pantryInput]: true,
+      });
     }
     setPantryInput(""); // Clear input after adding
   };
@@ -64,7 +73,9 @@ export default function Configuration() {
 
   // Completely delete pantry item from the list and cached memory
   const handleDeletePantryItem = (item: string) => {
-    const updatedPantryItems = pantryItems.filter((pantryItem) => pantryItem !== item);
+    const updatedPantryItems = pantryItems.filter(
+      (pantryItem) => pantryItem !== item
+    );
     const updatedStatus = { ...pantryItemStatus };
     delete updatedStatus[item]; // Remove the status for this item
 
@@ -102,12 +113,19 @@ export default function Configuration() {
         <div className="flex items-center justify-between px-4">
           <div className="flex items-center space-x-3">
             {/* Logo and Site Name */}
-            <img src={"/assets/favicon-96x96.png"} alt="Logo" className="h-10" />{" "}
+            <img
+              src={"/assets/favicon-96x96.png"}
+              alt="Logo"
+              className="h-10"
+            />{" "}
             <h1 className="text-2xl font-bold">DishFromThis</h1>
           </div>
 
           {/* Mobile Burger Menu */}
-          <button className="block lg:hidden" onClick={() => setMenuOpen(!menuOpen)}>
+          <button
+            className="block lg:hidden"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
             {menuOpen ? (
               <XMarkIcon className="h-6 w-6 text-textPrimary" />
             ) : (
@@ -123,7 +141,9 @@ export default function Configuration() {
           <nav className="p-4">
             <ul>
               <li className="mb-4">
-                <Link href="/" className="hover:text-gray-300">Home</Link>
+                <Link href="/" className="hover:text-gray-300">
+                  Home
+                </Link>
               </li>
             </ul>
           </nav>
@@ -135,7 +155,10 @@ export default function Configuration() {
             <nav>
               <ul>
                 <li className="mb-4">
-                  <Link href="/" className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg">
+                  <Link
+                    href="/"
+                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
+                  >
                     Home
                   </Link>
                 </li>
@@ -146,7 +169,9 @@ export default function Configuration() {
 
         {/* Main Content */}
         <main className="flex-grow p-8 mt-16 lg:ml-64">
-          <h1 className="text-2xl font-bold mb-4">Configure Your Ingredients</h1>
+          <h1 className="text-2xl font-bold mb-4">
+            Configure Your Ingredients
+          </h1>
 
           {/* Add Custom Pantry Item */}
           <div className="mt-6">
@@ -157,8 +182,12 @@ export default function Configuration() {
               onChange={(e) => setPantryInput(e.target.value)}
               placeholder="Enter pantry item"
               className="border-solid shadow-lg p-2 rounded-md w-full mb-2 bg-background text-foreground"
+              onKeyDown={(e) => e.key === "Enter" && handleAddPantryItem()}
             />
-            <button onClick={handleAddPantryItem} className="px-4 py-2 rounded-md w-full bg-secondary text-textPrimary shadow-lg">
+            <button
+              onClick={handleAddPantryItem}
+              className="px-4 py-2 rounded-md w-full bg-secondary text-textPrimary shadow-lg"
+            >
               Add Pantry Item
             </button>
           </div>
@@ -194,7 +223,9 @@ export default function Configuration() {
 
           {/* Spices and Dietary Requirements */}
           <div className="mt-6">
-            <h2 className="text-lg font-bold">Add Spices or Dietary Requirements</h2>
+            <h2 className="text-lg font-bold">
+              Add Spices or Dietary Requirements
+            </h2>
 
             <div className="mb-4">
               <select
@@ -213,9 +244,13 @@ export default function Configuration() {
               onChange={(e) => setInput(e.target.value)}
               placeholder={`Enter ${category} item`}
               className="border p-2 shadow-lg rounded-md w-full mb-2 bg-background text-foreground"
+              onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
             />
 
-            <button onClick={handleAddItem} className="px-4 py-2 rounded-md bg-secondary text-textPrimary shadow-lg">
+            <button
+              onClick={handleAddItem}
+              className="px-4 py-2 rounded-md bg-secondary text-textPrimary shadow-lg"
+            >
               Add Item
             </button>
           </div>
@@ -236,9 +271,13 @@ export default function Configuration() {
             <h2 className="text-lg font-bold">Dietary Requirements</h2>
             <ul className="list-disc list-inside">
               {dietaryRequirements.length > 0 ? (
-                dietaryRequirements.map((item, index) => <li key={index}>{item}</li>)
+                dietaryRequirements.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))
               ) : (
-                <li className="text-textSecondary">No dietary requirements added yet.</li>
+                <li className="text-textSecondary">
+                  No dietary requirements added yet.
+                </li>
               )}
             </ul>
           </div>
