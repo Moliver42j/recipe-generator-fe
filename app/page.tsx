@@ -10,6 +10,7 @@ interface Recipe {
   recipe: string;
   ingredients: string[];
   instructions: string;
+  error: string;
 }
 
 export default function Home() {
@@ -56,6 +57,10 @@ export default function Home() {
 
       const result = await response.json();
       const recipeData: Recipe = JSON.parse(result.body);
+      if (recipeData.error)
+      {
+        recipeData.recipe = 'No recipe found for chosen ingredients. \nTry adding more ingredients or changing your dietary restrictions.';
+      }
       setRecipe(recipeData);
     } catch (error) {
       if (error instanceof Error) {
