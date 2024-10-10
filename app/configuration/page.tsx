@@ -145,6 +145,11 @@ export default function Configuration() {
                   Home
                 </Link>
               </li>
+              <li className="mb-4">
+                <Link href="/favourites" className="hover:text-gray-300">
+                  Favourites
+                </Link>
+              </li>
             </ul>
           </nav>
         </aside>
@@ -160,6 +165,14 @@ export default function Configuration() {
                     className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
                   >
                     Home
+                  </Link>
+                </li>
+                <li className="mb-4">
+                  <Link
+                    href="/favourites"
+                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
+                  >
+                    Favourites
                   </Link>
                 </li>
               </ul>

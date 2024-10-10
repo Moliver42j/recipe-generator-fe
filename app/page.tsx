@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { TrashIcon, Bars3Icon, XMarkIcon, HeartIcon } from "@heroicons/react/24/solid";
 import { useHome } from "./homeContext";
 import { useConfig } from "./configContext";
-import { TrashIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import { getFromLocalStorage, saveToLocalStorage } from "./utils/storageUtils";
 
 interface Recipe {
@@ -20,6 +20,7 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [favourites, setFavourites] = useState<Recipe[]>([]); // State to store favourited recipes
   const [menuOpen, setMenuOpen] = useState(false);
 
   // Load cached data on mount
@@ -27,10 +28,12 @@ export default function Home() {
     const cachedIngredients = getFromLocalStorage("ingredients");
     const cachedPantryItems = getFromLocalStorage("pantryItems");
     const cachedPantryStatus = getFromLocalStorage("pantryItemStatus");
+    const cachedFavourites = getFromLocalStorage("favourites");
 
     if (cachedIngredients) setIngredients(cachedIngredients);
     if (cachedPantryItems) setPantryItems(cachedPantryItems);
     if (cachedPantryStatus) setPantryItemStatus(cachedPantryStatus);
+    if (cachedFavourites) setFavourites(cachedFavourites);
   }, [setIngredients, setPantryItems, setPantryItemStatus]);
 
   const handleAddIngredient = () => {
@@ -89,6 +92,15 @@ export default function Home() {
     }
   };
 
+  // Function to add the current recipe to favourites
+  const handleAddToFavourites = () => {
+    if (recipe) {
+      const updatedFavourites = [...favourites, recipe];
+      setFavourites(updatedFavourites);
+      saveToLocalStorage("favourites", updatedFavourites); // Cache favourites
+    }
+  };
+
   const handleRemoveIngredient = (index: number) => {
     const updatedIngredients = ingredients.filter((_, i) => i !== index);
     setIngredients(updatedIngredients);
@@ -133,12 +145,17 @@ export default function Home() {
 
       <div className="flex">
         {/* Sidebar for Desktop */}
-        <aside className="hidden lg:block fixed top-16 left-0 h-full w-64 bg-sidebar text-textSecondary">
+        <aside className="hidden lg:block fixed top-16 left-0 h-full w-64 bg-sidebar text-textPrimary">
           <nav className="p-4">
             <ul>
               <li className="mb-4">
                 <Link href="/configuration" className="hover:text-gray-300">
                   Configuration
+                </Link>
+              </li>
+              <li className="mb-4">
+                <Link href="/favourites" className="hover:text-gray-300">
+                  Favourites
                 </Link>
               </li>
             </ul>
@@ -156,6 +173,14 @@ export default function Home() {
                     className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
                   >
                     Configuration
+                  </Link>
+                </li>
+                <li className="mb-4">
+                  <Link
+                    href="/favourites"
+                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
+                  >
+                    Favourites
                   </Link>
                 </li>
               </ul>
@@ -293,6 +318,13 @@ export default function Home() {
                     <p>{recipe.instructions}</p>
                   </div>
                 )}
+
+                <button
+                  onClick={handleAddToFavourites}
+                  className="px-4 py-2 mt-2 rounded-md bg-secondary text-textPrimary shadow-lg"
+                >
+                  <HeartIcon className="h-5 w-5 inline-block mr-2" /> Add to Favourites
+                </button>
               </div>
             </div>
           )}
