@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useConfig } from "../configContext";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid"; 
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 
 export default function Configuration() {
   const {
@@ -68,7 +68,11 @@ export default function Configuration() {
         <div className="flex items-center justify-between px-4">
           <div className="flex items-center space-x-3">
             {/* Logo and Site Name */}
-            <img src = {"/assets/favicon-96x96.png"} alt="Logo" className="h-10" />{" "}
+            <img
+              src={"/assets/favicon-96x96.png"}
+              alt="Logo"
+              className="h-10"
+            />{" "}
             {/* Use favicon.ico as logo */}
             <h1 className="text-2xl font-bold">DishFromThis</h1>
           </div>
@@ -87,7 +91,7 @@ export default function Configuration() {
         </div>
       </header>
 
-      <div className="flex">
+      <div className="flex flex-col min-h-screen">
         {/* Sidebar for Desktop */}
         <aside className="hidden lg:block fixed top-16 left-0 h-full w-64 bg-sidebar text-textPrimary">
           <nav className="p-4">
@@ -134,7 +138,9 @@ export default function Configuration() {
 
         {/* Main Content */}
         <main className="flex-grow p-8 mt-16 lg:ml-64">
-          <h1 className="text-2xl font-bold mb-4">Configure Your Ingredients</h1>
+          <h1 className="text-2xl font-bold mb-4">
+            Configure Your Ingredients
+          </h1>
 
           {/* Add Custom Pantry Item */}
           <div className="mt-6">
@@ -174,7 +180,9 @@ export default function Configuration() {
 
           {/* Spices and Dietary Requirements */}
           <div className="mt-6">
-            <h2 className="text-lg font-bold">Add Spices or Dietary Requirements</h2>
+            <h2 className="text-lg font-bold">
+              Add Spices or Dietary Requirements
+            </h2>
 
             <div className="mb-4">
               <select
@@ -226,11 +234,23 @@ export default function Configuration() {
                   <li key={index}>{item}</li>
                 ))
               ) : (
-                <li className="text-textSecondary">No dietary requirements added yet.</li>
+                <li className="text-textSecondary">
+                  No dietary requirements added yet.
+                </li>
               )}
             </ul>
           </div>
         </main>
+      
+        {/* Footer Section
+        <footer className="bg-primary text-textPrimary py-4 w-100 bottom-0 left-0">
+            <div className="text-center">
+              <p className="text-sm">
+                &copy; {new Date().getFullYear()} DishFromThis. All rights reserved.
+              </p>
+              <p className="text-sm">dishfromthis.com</p>
+            </div>
+        </footer> */}
       </div>
     </div>
   );

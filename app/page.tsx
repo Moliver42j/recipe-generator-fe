@@ -292,13 +292,15 @@ export default function Home() {
           )}
         </main>
       </div>
-      {/* Footer Section */}
-      <footer className="bg-primary text-textPrimary py-4 mt-auto w-full fixed bottom-0 left-0">
-        <div className="text-center">
-          <p className="text-sm">&copy; {new Date().getFullYear()} DishFromThis. All rights reserved.</p>
-          <p className="text-sm">DishFromThis.com</p>
-        </div>
-      </footer>
+      {/* Footer Section
+        <footer className="bg-primary text-textPrimary py-4 w-100 bottom-0 left-0">
+            <div className="text-center">
+              <p className="text-sm">
+                &copy; {new Date().getFullYear()} DishFromThis. All rights reserved.
+              </p>
+              <p className="text-sm">dishfromthis.com</p>
+            </div>
+        </footer> */}
     </div>
   );
 }
