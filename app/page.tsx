@@ -1,10 +1,12 @@
 "use client"; // Ensure this is a client component
 
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import Link from "next/link";
 import { useHome } from "./homeContext";
 import { useConfig } from "./configContext";
 import { TrashIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
+import { getFromLocalStorage, saveToLocalStorage } from "./utils/storageUtils";
+
 
 interface Recipe {
   recipe: string;
@@ -22,10 +24,22 @@ export default function Home() {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Load cached data on mount
+  useEffect(() => {
+    const cachedIngredients = getFromLocalStorage("ingredients");
+    const cachedPantryItems = getFromLocalStorage("pantryItems");
+    const cachedSpices = getFromLocalStorage("spices");
+
+    if (cachedIngredients) setIngredients(cachedIngredients);
+    if (cachedPantryItems) setPantryItems(cachedPantryItems);
+  }, [setIngredients, setPantryItems]);
+
   const handleAddIngredient = () => {
     if (input.trim() !== "") {
       const newIngredients = input.split(",").map((ing) => ing.trim());
-      setIngredients([...ingredients, ...newIngredients]);
+      const updatedIngredients = [...ingredients, ...newIngredients];
+      setIngredients(updatedIngredients);
+      saveToLocalStorage("ingredients", updatedIngredients); // Cache the ingredients
       setInput("");
     }
   };
@@ -75,10 +89,13 @@ export default function Home() {
   const handleRemoveIngredient = (index: number) => {
     const updatedIngredients = ingredients.filter((_, i) => i !== index);
     setIngredients(updatedIngredients);
+    saveToLocalStorage("ingredients", updatedIngredients); // Cache the updated ingredients
   };
 
   const handleRemovePantryItem = (item: string) => {
-    setPantryItems(pantryItems.filter((pantryItem) => pantryItem !== item));
+    const updatedPantryItems = pantryItems.filter((pantryItem) => pantryItem !== item);
+    setPantryItems(updatedPantryItems);
+    saveToLocalStorage("pantryItems", updatedPantryItems); // Cache the updated pantry items
   };
 
   return (

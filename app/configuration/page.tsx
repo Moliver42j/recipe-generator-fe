@@ -1,9 +1,10 @@
 "use client"; // Ensure this is a client component
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useConfig } from "../configContext";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
+import { getFromLocalStorage, saveToLocalStorage } from "../utils/storageUtils";
 
 export default function Configuration() {
   const {
@@ -14,33 +15,56 @@ export default function Configuration() {
     dietaryRequirements,
     setDietaryRequirements,
   } = useConfig();
-  const [menuOpen, setMenuOpen] = useState(false); // State for mobile menu
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Keep a full list of all possible pantry items (both ticked and unticked)
-  const [allPantryItems, setAllPantryItems] = useState<string[]>([
-    ...pantryItems,
-  ]);
+  const [allPantryItems, setAllPantryItems] = useState<string[]>([]);
 
   // State to handle adding custom pantry items
   const [pantryInput, setPantryInput] = useState("");
 
+  // Load cached data on component mount
+  useEffect(() => {
+    const cachedPantryItems = getFromLocalStorage("pantryItems");
+    const cachedSpices = getFromLocalStorage("spices");
+    const cachedDietaryRequirements = getFromLocalStorage("dietaryRequirements");
+
+    if (cachedPantryItems) {
+      setPantryItems(cachedPantryItems);
+      setAllPantryItems(cachedPantryItems);
+    }
+    if (cachedSpices) {
+      setSpices(cachedSpices);
+    }
+    if (cachedDietaryRequirements) {
+      setDietaryRequirements(cachedDietaryRequirements);
+    }
+  }, [setPantryItems, setSpices, setDietaryRequirements]);
+
   // Handle checkbox toggle for pantry items
   const handleCheckboxChange = (item: string) => {
+    let updatedPantryItems;
     if (pantryItems.includes(item)) {
-      setPantryItems(pantryItems.filter((pantryItem) => pantryItem !== item));
+      updatedPantryItems = pantryItems.filter((pantryItem) => pantryItem !== item);
     } else {
-      setPantryItems([...pantryItems, item]);
+      updatedPantryItems = [...pantryItems, item];
     }
+    setPantryItems(updatedPantryItems);
+    saveToLocalStorage("pantryItems", updatedPantryItems);
   };
 
   // Handle adding custom pantry item
   const handleAddPantryItem = () => {
     if (pantryInput.trim() === "") return;
     if (!allPantryItems.includes(pantryInput)) {
-      setAllPantryItems([...allPantryItems, pantryInput]);
+      const updatedAllPantryItems = [...allPantryItems, pantryInput];
+      setAllPantryItems(updatedAllPantryItems);
+      saveToLocalStorage("pantryItems", updatedAllPantryItems);
     }
     if (!pantryItems.includes(pantryInput)) {
-      setPantryItems([...pantryItems, pantryInput]);
+      const updatedPantryItems = [...pantryItems, pantryInput];
+      setPantryItems(updatedPantryItems);
+      saveToLocalStorage("pantryItems", updatedPantryItems);
     }
     setPantryInput(""); // Clear input after adding
   };
@@ -53,9 +77,13 @@ export default function Configuration() {
     if (input.trim() === "") return;
 
     if (category === "spices") {
-      setSpices([...spices, input]);
+      const updatedSpices = [...spices, input];
+      setSpices(updatedSpices);
+      saveToLocalStorage("spices", updatedSpices);
     } else if (category === "diet") {
-      setDietaryRequirements([...dietaryRequirements, input]);
+      const updatedDietaryRequirements = [...dietaryRequirements, input];
+      setDietaryRequirements(updatedDietaryRequirements);
+      saveToLocalStorage("dietaryRequirements", updatedDietaryRequirements);
     }
 
     setInput("");
