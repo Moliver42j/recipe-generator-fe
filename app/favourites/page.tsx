@@ -1,7 +1,12 @@
 "use client"; // Ensure this is a client component
 
 import { useState, useEffect } from "react";
-import { TrashIcon, PencilIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
+import {
+  TrashIcon,
+  PencilIcon,
+  Bars3Icon,
+  XMarkIcon,
+} from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { getFromLocalStorage, saveToLocalStorage } from "../utils/storageUtils";
 
@@ -25,7 +30,9 @@ export default function Favourites() {
 
   // Function to delete a recipe from favourites
   const handleDelete = (recipeIndex: number) => {
-    const updatedFavourites = favourites.filter((_, index) => index !== recipeIndex);
+    const updatedFavourites = favourites.filter(
+      (_, index) => index !== recipeIndex
+    );
     setFavourites(updatedFavourites);
     saveToLocalStorage("favourites", updatedFavourites);
   };
@@ -43,17 +50,20 @@ export default function Favourites() {
       updatedFavourites[editIndex] = editingRecipe;
       setFavourites(updatedFavourites);
       saveToLocalStorage("favourites", updatedFavourites);
-      setEditingRecipe(null); // Exit edit mode
-      setEditIndex(null); // Reset the editing index
+      setEditingRecipe(null);
+      setEditIndex(null);
     }
   };
 
-  // Handle input changes for the currently editing recipe
-  const handleEditChange = (field: keyof Recipe, value: string) => {
+const handleEditChange = (field: keyof Recipe, value: string | string[]) => {
     if (editingRecipe) {
-      setEditingRecipe({ ...editingRecipe, [field]: value });
+      setEditingRecipe({
+        ...editingRecipe,
+        [field]: value,
+      });
     }
   };
+  
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -62,12 +72,19 @@ export default function Favourites() {
         <div className="flex items-center justify-between px-4">
           <div className="flex items-center space-x-3">
             {/* Logo and Site Name */}
-            <img src={"/assets/favicon-96x96.png"} alt="Logo" className="h-10" />
+            <img
+              src={"/assets/favicon-96x96.png"}
+              alt="Logo"
+              className="h-10"
+            />
             <h1 className="text-2xl font-bold">DishFromThis</h1>
           </div>
 
           {/* Mobile Burger Menu */}
-          <button className="block lg:hidden" onClick={() => setMenuOpen(!menuOpen)}>
+          <button
+            className="block lg:hidden"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
             {menuOpen ? (
               <XMarkIcon className="h-6 w-6 text-textPrimary" />
             ) : (
@@ -102,12 +119,18 @@ export default function Favourites() {
             <nav>
               <ul>
                 <li className="mb-4">
-                  <Link href="/" className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg">
+                  <Link
+                    href="/"
+                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
+                  >
                     Home
                   </Link>
                 </li>
                 <li className="mb-4">
-                  <Link href="/configuration" className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg">
+                  <Link
+                    href="/configuration"
+                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
+                  >
                     Configuration
                   </Link>
                 </li>
@@ -132,19 +155,28 @@ export default function Favourites() {
                       <input
                         type="text"
                         value={editingRecipe.recipe}
-                        onChange={(e) => handleEditChange("recipe", e.target.value)}
+                        onChange={(e) =>
+                          handleEditChange("recipe", e.target.value)
+                        }
                         className="border p-2 mb-2 w-full"
                         placeholder="Edit Recipe Title"
                       />
                       <textarea
                         value={editingRecipe.instructions}
-                        onChange={(e) => handleEditChange("instructions", e.target.value)}
+                        onChange={(e) =>
+                          handleEditChange("instructions", e.target.value)
+                        }
                         className="border p-2 mb-2 w-full"
                         placeholder="Edit Recipe Instructions"
                       />
                       <textarea
                         value={editingRecipe.ingredients.join(", ")}
-                        onChange={(e) => handleEditChange("ingredients", e.target.value.split(", "))}
+                        onChange={(e) =>
+                          handleEditChange(
+                            "ingredients",
+                            e.target.value.split(", ")
+                          )
+                        }
                         className="border p-2 mb-2 w-full"
                         placeholder="Edit Ingredients (comma-separated)"
                       />
@@ -160,22 +192,35 @@ export default function Favourites() {
                     <div>
                       <h3 className="font-bold">{recipe.recipe}</h3>
                       <p className="mt-2">
-                        <strong>Ingredients:</strong> {recipe.ingredients.join(", ")}
+                        <strong>Ingredients:</strong>
+                        <ul className="list-disc list-inside ml-5 mt-2">
+                          {" "}
+                          {/* List with bullets and spacing */}
+                          {recipe.ingredients.map((ingredient, idx) => (
+                            <li key={idx} className="mb-1">
+                              {" "}
+                              {/* Add margin-bottom to separate ingredients */}
+                              {ingredient}
+                            </li>
+                          ))}
+                        </ul>
                       </p>
-                      <p className="mt-2">
+                      <p className="mt-2 mb-4">
                         <strong>Instructions:</strong> {recipe.instructions}
                       </p>
                       <button
                         onClick={() => handleEdit(recipe, index)}
                         className="px-4 py-2 rounded-md bg-secondary text-textPrimary shadow-lg mr-2"
                       >
-                        <PencilIcon className="h-5 w-5 inline-block mr-2" /> Edit
+                        <PencilIcon className="h-5 w-5 inline-block mr-2" />{" "}
+                        Edit
                       </button>
                       <button
                         onClick={() => handleDelete(index)}
                         className="px-4 py-2 rounded-md bg-red-600 text-white shadow-lg"
                       >
-                        <TrashIcon className="h-5 w-5 inline-block mr-2" /> Delete
+                        <TrashIcon className="h-5 w-5 inline-block mr-2" />{" "}
+                        Delete
                       </button>
                     </div>
                   )}
