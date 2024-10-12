@@ -2,7 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { TrashIcon, Bars3Icon, XMarkIcon, HeartIcon } from "@heroicons/react/24/solid";
+import {
+  TrashIcon,
+  Bars3Icon,
+  XMarkIcon,
+  HeartIcon,
+  ChevronDownIcon,
+  ChevronUpIcon
+} from "@heroicons/react/24/solid";
 import { useHome } from "./homeContext";
 import { useConfig } from "./configContext";
 import { getFromLocalStorage, saveToLocalStorage } from "./utils/storageUtils";
@@ -16,12 +23,20 @@ interface Recipe {
 
 export default function Home() {
   const { ingredients, setIngredients } = useHome();
-  const { pantryItems, setPantryItems, spices, dietaryRequirements, pantryItemStatus, setPantryItemStatus } = useConfig();
+  const {
+    pantryItems,
+    setPantryItems,
+    spices,
+    dietaryRequirements,
+    pantryItemStatus,
+    setPantryItemStatus,
+  } = useConfig();
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [favourites, setFavourites] = useState<Recipe[]>([]); // State to store favourited recipes
   const [menuOpen, setMenuOpen] = useState(false);
+  const [pantryOpen, setPantryOpen] = useState(true);
 
   // Load cached data on mount
   useEffect(() => {
@@ -51,7 +66,9 @@ export default function Home() {
     setRecipe(null);
 
     // Only include pantry items that have a status of true
-    const tickedPantryItems = pantryItems.filter((item) => pantryItemStatus[item]);
+    const tickedPantryItems = pantryItems.filter(
+      (item) => pantryItemStatus[item]
+    );
 
     const payload = {
       ingredients: [...ingredients],
@@ -149,13 +166,36 @@ export default function Home() {
           <nav className="p-4">
             <ul>
               <li className="mb-4">
-                <Link href="/configuration" className="hover:text-gray-300">
+                <Link
+                  href="/"
+                  className="bg-secondary text-textPrimary p-2 rounded-md block"
+                >
+                  Home
+                </Link>
+              </li>
+              <li className="mb-4">
+                <Link
+                  href="/configuration"
+                  className="hover:text-gray-300 p-2 rounded-md block"
+                >
                   Configuration
                 </Link>
               </li>
               <li className="mb-4">
-                <Link href="/favourites" className="hover:text-gray-300">
+                <Link
+                  href="/favourites"
+                  className="hover:text-gray-300 p-2 rounded-md block"
+                >
                   Favourites
+                </Link>
+              </li>
+              <li className="mb-4">
+                {/* Export page is highlighted with bg-secondary */}
+                <Link
+                  href="/export"
+                  className="hover:text-gray-300 p-2 rounded-md block"
+                >
+                  Export
                 </Link>
               </li>
             </ul>
@@ -181,6 +221,14 @@ export default function Home() {
                     className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
                   >
                     Favourites
+                  </Link>
+                </li>
+                <li className="mb-4">
+                  <Link
+                    href="/export"
+                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
+                  >
+                    Export
                   </Link>
                 </li>
               </ul>
@@ -232,30 +280,43 @@ export default function Home() {
                 ))}
               </ul>
             ) : (
-              <p className="text-textSecondary">No fresh ingredients added yet.</p>
+              <p className="text-textSecondary">
+                No fresh ingredients added yet.
+              </p>
             )}
           </div>
 
-          {/* Pantry Staples Section */}
-          <div className="mb-4">
-            <h3 className="font-semibold">Pantry Staples</h3>
-            {pantryItems
-              .filter((item) => pantryItemStatus[item]) // Only show pantry items where the status is true
-              .map((item, index) => (
-                <ul className="list-disc list-inside" key={index}>
-                  <li className="flex items-center justify-between">
-                    <span>{item}</span>
-                    <button
-                      onClick={() => handleRemovePantryItem(item)}
-                      className="ml-4 text-textSecondary"
-                    >
-                      <TrashIcon className="h-5 w-5" />
-                    </button>
-                  </li>
-                </ul>
-              ))}
-            {pantryItems.filter((item) => pantryItemStatus[item]).length === 0 && (
-              <p className="text-textSecondary">No pantry staples added.</p>
+          {/* Pantry Section with Toggle */}
+          <div className="mt-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-bold">Pantry Staples</h2>
+              <button onClick={() => setPantryOpen(!pantryOpen)}>
+                {pantryOpen ? (
+                  <ChevronUpIcon className="h-5 w-5 text-primary" />
+                ) : (
+                  <ChevronDownIcon className="h-5 w-5 text-primary" />
+                )}
+              </button>
+            </div>
+
+            {pantryOpen && (
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                {pantryItems
+                  .filter((item) => pantryItemStatus[item]) // Only show pantry items where the status is true
+                  .map((item, index) => (
+                    <ul className="list-disc list-inside" key={index}>
+                      <li className="flex items-center justify-between">
+                        <span>{item}</span>
+                        <button onClick={() => handleRemovePantryItem(item)} className="ml-4 text-textSecondary">
+                          <TrashIcon className="h-5 w-5" />
+                        </button>
+                      </li>
+                    </ul>
+                  ))}
+                {pantryItems.filter((item) => pantryItemStatus[item]).length === 0 && (
+                  <p className="text-textSecondary">No pantry staples added.</p>
+                )}
+              </div>
             )}
           </div>
 
@@ -323,7 +384,8 @@ export default function Home() {
                   onClick={handleAddToFavourites}
                   className="px-4 py-2 mt-2 rounded-md bg-secondary text-textPrimary shadow-lg"
                 >
-                  <HeartIcon className="h-5 w-5 inline-block mr-2" /> Add to Favourites
+                  <HeartIcon className="h-5 w-5 inline-block mr-2" /> Add to
+                  Favourites
                 </button>
               </div>
             </div>

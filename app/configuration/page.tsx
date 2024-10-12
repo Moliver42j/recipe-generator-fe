@@ -3,8 +3,17 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useConfig } from "../configContext";
-import { TrashIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
-import { getFromLocalStorage, saveToLocalStorage } from "../utils/storageUtils";
+import {
+  TrashIcon,
+  Bars3Icon,
+  XMarkIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+} from "@heroicons/react/24/solid"; // Import Chevron icons for dropdown
+import {
+  getFromLocalStorage,
+  saveToLocalStorage,
+} from "../utils/storageUtils";
 
 export default function Configuration() {
   const {
@@ -17,19 +26,20 @@ export default function Configuration() {
     dietaryRequirements,
     setDietaryRequirements,
   } = useConfig();
-  const [menuOpen, setMenuOpen] = useState(false);
 
-  // State to handle adding custom pantry items
+  const [menuOpen, setMenuOpen] = useState(false);
   const [pantryInput, setPantryInput] = useState("");
+  const [input, setInput] = useState("");
+  const [category, setCategory] = useState("spices");
+  const [pantryOpen, setPantryOpen] = useState(true); // State to control pantry visibility
 
   // Load cached data on component mount
   useEffect(() => {
     const cachedPantryItems = getFromLocalStorage("pantryItems");
     const cachedPantryItemStatus = getFromLocalStorage("pantryItemStatus");
     const cachedSpices = getFromLocalStorage("spices");
-    const cachedDietaryRequirements = getFromLocalStorage(
-      "dietaryRequirements"
-    );
+    const cachedDietaryRequirements =
+      getFromLocalStorage("dietaryRequirements");
 
     if (cachedPantryItems) setPantryItems(cachedPantryItems);
     if (cachedPantryItemStatus) setPantryItemStatus(cachedPantryItemStatus);
@@ -48,18 +58,27 @@ export default function Configuration() {
     saveToLocalStorage("pantryItemStatus", updatedStatus);
   };
 
-  // Handle adding custom pantry item
+  // Handle adding custom pantry items (supports comma-separated values)
   const handleAddPantryItem = () => {
     if (pantryInput.trim() === "") return;
-    if (!pantryItems.includes(pantryInput)) {
-      const updatedPantryItems = [...pantryItems, pantryInput];
+
+    const newItems = pantryInput
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0 && !pantryItems.includes(item));
+
+    if (newItems.length > 0) {
+      const updatedPantryItems = [...pantryItems, ...newItems];
       setPantryItems(updatedPantryItems);
-      setPantryItemStatus({ ...pantryItemStatus, [pantryInput]: true }); // New item is checked by default
-      saveToLocalStorage("pantryItems", updatedPantryItems);
-      saveToLocalStorage("pantryItemStatus", {
-        ...pantryItemStatus,
-        [pantryInput]: true,
+
+      const newStatus = { ...pantryItemStatus };
+      newItems.forEach((item) => {
+        newStatus[item] = true; // New items are checked by default
       });
+      setPantryItemStatus(newStatus);
+
+      saveToLocalStorage("pantryItems", updatedPantryItems);
+      saveToLocalStorage("pantryItemStatus", newStatus);
     }
     setPantryInput(""); // Clear input after adding
   };
@@ -86,21 +105,34 @@ export default function Configuration() {
     saveToLocalStorage("pantryItemStatus", updatedStatus); // Update the cached status
   };
 
-  const [input, setInput] = useState("");
-  const [category, setCategory] = useState("spices");
-
-  // Handle adding spices and dietary requirements
+  // Handle adding spices and dietary requirements (supports comma-separated values)
   const handleAddItem = () => {
     if (input.trim() === "") return;
 
+    const newItems = input
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0);
+
     if (category === "spices") {
-      const updatedSpices = [...spices, input];
-      setSpices(updatedSpices);
-      saveToLocalStorage("spices", updatedSpices);
+      const uniqueNewItems = newItems.filter((item) => !spices.includes(item));
+      if (uniqueNewItems.length > 0) {
+        const updatedSpices = [...spices, ...uniqueNewItems];
+        setSpices(updatedSpices);
+        saveToLocalStorage("spices", updatedSpices);
+      }
     } else if (category === "diet") {
-      const updatedDietaryRequirements = [...dietaryRequirements, input];
-      setDietaryRequirements(updatedDietaryRequirements);
-      saveToLocalStorage("dietaryRequirements", updatedDietaryRequirements);
+      const uniqueNewItems = newItems.filter(
+        (item) => !dietaryRequirements.includes(item)
+      );
+      if (uniqueNewItems.length > 0) {
+        const updatedDietaryRequirements = [
+          ...dietaryRequirements,
+          ...uniqueNewItems,
+        ];
+        setDietaryRequirements(updatedDietaryRequirements);
+        saveToLocalStorage("dietaryRequirements", updatedDietaryRequirements);
+      }
     }
 
     setInput("");
@@ -141,13 +173,35 @@ export default function Configuration() {
           <nav className="p-4">
             <ul>
               <li className="mb-4">
-                <Link href="/" className="hover:text-gray-300">
+                <Link
+                  href="/"
+                  className="hover:text-gray-300 p-2 rounded-md block"
+                >
                   Home
                 </Link>
               </li>
               <li className="mb-4">
-                <Link href="/favourites" className="hover:text-gray-300">
+                <Link
+                  href="/configuration"
+                  className="bg-secondary text-textPrimary p-2 rounded-md block"
+                >
+                  Configuration
+                </Link>
+              </li>
+              <li className="mb-4">
+                <Link
+                  href="/favourites"
+                  className="hover:text-gray-300 p-2 rounded-md block"
+                >
                   Favourites
+                </Link>
+              </li>
+              <li className="mb-4">
+                <Link
+                  href="/export"
+                  className="hover:text-gray-300 p-2 rounded-md block"
+                >
+                  Export
                 </Link>
               </li>
             </ul>
@@ -169,10 +223,26 @@ export default function Configuration() {
                 </li>
                 <li className="mb-4">
                   <Link
+                    href="/configuration"
+                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
+                  >
+                    Configuration
+                  </Link>
+                </li>
+                <li className="mb-4">
+                  <Link
                     href="/favourites"
                     className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
                   >
                     Favourites
+                  </Link>
+                </li>
+                <li className="mb-4">
+                  <Link
+                    href="/export"
+                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
+                  >
+                    Export
                   </Link>
                 </li>
               </ul>
@@ -186,52 +256,72 @@ export default function Configuration() {
             Configure Your Ingredients
           </h1>
 
-          {/* Add Custom Pantry Item */}
+          {/* Add Custom Pantry Items */}
           <div className="mt-6">
-            <h2 className="text-lg font-bold">Add Pantry Item</h2>
+            <h2 className="text-lg font-bold">Add Pantry Items</h2>
             <input
               type="text"
               value={pantryInput}
               onChange={(e) => setPantryInput(e.target.value)}
-              placeholder="Enter pantry item"
-              className="border-solid shadow-lg p-2 rounded-md w-full mb-2 bg-background text-foreground"
+              placeholder="Enter pantry items (comma-separated)"
+              className="border p-2 shadow-lg rounded-md w-full mb-2 bg-background text-foreground"
               onKeyDown={(e) => e.key === "Enter" && handleAddPantryItem()}
             />
             <button
               onClick={handleAddPantryItem}
               className="px-4 py-2 rounded-md w-full bg-secondary text-textPrimary shadow-lg"
             >
-              Add Pantry Item
+              Add Pantry Items
             </button>
+            <p className="text-sm text-textSecondary mt-1">
+              Enter multiple items separated by commas.
+            </p>
           </div>
 
-          {/* Pantry Staples with Checkboxes and Delete Buttons */}
+          {/* Pantry Section with Toggle */}
           <div className="mt-6">
-            <h2 className="text-lg font-bold">Pantry Items</h2>
-            <div className="grid grid-cols-2 gap-4">
-              {pantryItems.map((item, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <label className="flex items-center space-x-3">
-                    <input
-                      type="checkbox"
-                      checked={!!pantryItemStatus[item]}
-                      onChange={() => handleCheckboxChange(item)}
-                      className="form-checkbox h-5 w-5 text-primary"
-                    />
-                    <span>{item}</span>
-                  </label>
-                  <button
-                    onClick={() => handleDeletePantryItem(item)}
-                    className="text-textSecondary hover:text-red-600"
-                  >
-                    <TrashIcon className="h-5 w-5" />
-                  </button>
-                </div>
-              ))}
-              {pantryItems.length === 0 && (
-                <p className="text-textSecondary">No pantry items available.</p>
-              )}
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-bold">Pantry Items</h2>
+              <button onClick={() => setPantryOpen(!pantryOpen)}>
+                {pantryOpen ? (
+                  <ChevronUpIcon className="h-5 w-5 text-primary" />
+                ) : (
+                  <ChevronDownIcon className="h-5 w-5 text-primary" />
+                )}
+              </button>
             </div>
+
+            {pantryOpen && (
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                {pantryItems.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        checked={!!pantryItemStatus[item]}
+                        onChange={() => handleCheckboxChange(item)}
+                        className="form-checkbox h-5 w-5 text-primary"
+                      />
+                      <span>{item}</span>
+                    </label>
+                    <button
+                      onClick={() => handleDeletePantryItem(item)}
+                      className="text-textSecondary hover:text-red-600"
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  </div>
+                ))}
+                {pantryItems.length === 0 && (
+                  <p className="text-textSecondary">
+                    No pantry items available.
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Spices and Dietary Requirements */}
@@ -255,17 +345,19 @@ export default function Configuration() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={`Enter ${category} item`}
+              placeholder={`Enter ${category} items (comma-separated)`}
               className="border p-2 shadow-lg rounded-md w-full mb-2 bg-background text-foreground"
               onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
             />
-
             <button
               onClick={handleAddItem}
               className="px-4 py-2 rounded-md bg-secondary text-textPrimary shadow-lg"
             >
-              Add Item
+              Add {category === "spices" ? "Spices" : "Dietary Requirements"}
             </button>
+            <p className="text-sm text-textSecondary mt-1">
+              Enter multiple items separated by commas.
+            </p>
           </div>
 
           {/* Display Spices and Dietary Requirements */}

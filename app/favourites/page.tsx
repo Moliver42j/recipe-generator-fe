@@ -55,7 +55,7 @@ export default function Favourites() {
     }
   };
 
-const handleEditChange = (field: keyof Recipe, value: string | string[]) => {
+  const handleEditChange = (field: keyof Recipe, value: string | string[]) => {
     if (editingRecipe) {
       setEditingRecipe({
         ...editingRecipe,
@@ -63,7 +63,6 @@ const handleEditChange = (field: keyof Recipe, value: string | string[]) => {
       });
     }
   };
-  
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -100,13 +99,36 @@ const handleEditChange = (field: keyof Recipe, value: string | string[]) => {
           <nav className="p-4">
             <ul>
               <li className="mb-4">
-                <Link href="/" className="hover:text-gray-300">
+                <Link
+                  href="/"
+                  className="hover:text-gray-300 p-2 rounded-md block"
+                >
                   Home
                 </Link>
               </li>
               <li className="mb-4">
-                <Link href="/configuration" className="hover:text-gray-300">
+                <Link
+                  href="/configuration"
+                  className="hover:text-gray-300 p-2 rounded-md block"
+                >
                   Configuration
+                </Link>
+              </li>
+              <li className="mb-4">
+                <Link
+                  href="/favourites"
+                  className="bg-secondary text-textPrimary p-2 rounded-md block"
+                >
+                  Favourites
+                </Link>
+              </li>
+              <li className="mb-4">
+                {/* Export page is highlighted with bg-secondary */}
+                <Link
+                  href="/export"
+                  className="hover:text-gray-300 p-2 rounded-md block"
+                >
+                  Export
                 </Link>
               </li>
             </ul>
@@ -132,6 +154,14 @@ const handleEditChange = (field: keyof Recipe, value: string | string[]) => {
                     className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
                   >
                     Configuration
+                  </Link>
+                </li>
+                <li className="mb-4">
+                  <Link
+                    href="/export"
+                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
+                  >
+                    Export
                   </Link>
                 </li>
               </ul>
