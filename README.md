@@ -39,7 +39,7 @@ Welcome to **DishFromThis**, a recipe generation web application that allows use
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/your-repository-url
-   cd dishfromthis
+   cd recipe-generator-fe
    ```
 
 2. **Install Dependancies**
