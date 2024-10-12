@@ -93,4 +93,4 @@ Customization
 You can easily customize the colors, styles, and layout by modifying the Tailwind CSS styles defined in globals.css. Additionally, you can adjust the sidebar or mobile menu behavior to suit your design preferences.
 
 ## Contact
-For any inquiries or contributions, please reach out to matthewoliver88&gmail.com.
+For any inquiries or contributions, please reach out to matthewoliver88gmail.com.
