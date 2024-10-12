@@ -258,6 +258,10 @@ export default function Configuration() {
 
           {/* Add Custom Pantry Items */}
           <div className="mt-6">
+            <p className="text-textSecondary">
+              Add custom pantry items to track your inventory. This is where you put Items that you always have in your cupboards.
+            </p>
+            <p className="text-textSecondary">You can also mark them as available or not available. </p>
             <h2 className="text-lg font-bold">Add Pantry Items</h2>
             <input
               type="text"

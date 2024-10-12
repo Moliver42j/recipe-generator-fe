@@ -8,7 +8,7 @@ import {
   XMarkIcon,
   HeartIcon,
   ChevronDownIcon,
-  ChevronUpIcon
+  ChevronUpIcon,
 } from "@heroicons/react/24/solid";
 import { useHome } from "./homeContext";
 import { useConfig } from "./configContext";
@@ -239,6 +239,12 @@ export default function Home() {
         {/* Main Content */}
         <main className="flex-grow p-8 mt-16 lg:ml-64 mb-16">
           <h1 className="text-2xl font-bold mb-4">Enter Fresh Ingredients</h1>
+          <p className="text-textSecondary">
+            Add fresh ingredients you have at home to generate a recipe.{" "}
+          </p>
+          <p className="text-textSecondary">
+            You can also add pantry items you usually have at home on the configuration page.{" "}
+          </p>
 
           {/* Input to add fresh ingredients */}
           <input
@@ -264,7 +270,9 @@ export default function Home() {
           {/* Ingredients Section */}
           <h2 className="mt-4 text-lg font-bold">Ingredients</h2>
           <div className="mb-4">
-            <h3 className="font-semibold">Fresh Ingredients</h3>
+            <h3 className="font-semibold">
+              <u>Fresh Ingredients</u>
+            </h3>
             {ingredients.length > 0 ? (
               <ul className="list-disc list-inside">
                 {ingredients.map((ingredient, index) => (
@@ -289,7 +297,9 @@ export default function Home() {
           {/* Pantry Section with Toggle */}
           <div className="mt-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-lg font-bold">Pantry Staples</h2>
+              <h3 className="font-semibold">
+                <u>Pantry Items</u>
+              </h3>
               <button onClick={() => setPantryOpen(!pantryOpen)}>
                 {pantryOpen ? (
                   <ChevronUpIcon className="h-5 w-5 text-primary" />
@@ -307,13 +317,17 @@ export default function Home() {
                     <ul className="list-disc list-inside" key={index}>
                       <li className="flex items-center justify-between">
                         <span>{item}</span>
-                        <button onClick={() => handleRemovePantryItem(item)} className="ml-4 text-textSecondary">
+                        <button
+                          onClick={() => handleRemovePantryItem(item)}
+                          className="ml-4 text-textSecondary"
+                        >
                           <TrashIcon className="h-5 w-5" />
                         </button>
                       </li>
                     </ul>
                   ))}
-                {pantryItems.filter((item) => pantryItemStatus[item]).length === 0 && (
+                {pantryItems.filter((item) => pantryItemStatus[item]).length ===
+                  0 && (
                   <p className="text-textSecondary">No pantry staples added.</p>
                 )}
               </div>

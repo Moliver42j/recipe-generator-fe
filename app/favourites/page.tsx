@@ -177,8 +177,8 @@ export default function Favourites() {
             <p>No favourites added yet.</p>
           ) : (
             <ul>
-              {favourites.map((recipe, index) => (
-                <li key={index} className="mb-4 p-4 border rounded-md shadow">
+              {favourites.map((recipe, index) => ( 
+                <li key={index} className="mb-4 p-4 border rounded-md shadow bg-secondary text-textPrimary">
                   {editingRecipe && editIndex === index ? (
                     // Editing mode
                     <div>
@@ -188,7 +188,7 @@ export default function Favourites() {
                         onChange={(e) =>
                           handleEditChange("recipe", e.target.value)
                         }
-                        className="border p-2 mb-2 w-full"
+                        className="border p-2 mb-2 w-full bg-white text-black"
                         placeholder="Edit Recipe Title"
                       />
                       <textarea
@@ -196,7 +196,7 @@ export default function Favourites() {
                         onChange={(e) =>
                           handleEditChange("instructions", e.target.value)
                         }
-                        className="border p-2 mb-2 w-full"
+                        className="border p-2 mb-2 w-full bg-white text-black"
                         placeholder="Edit Recipe Instructions"
                       />
                       <textarea
@@ -204,15 +204,15 @@ export default function Favourites() {
                         onChange={(e) =>
                           handleEditChange(
                             "ingredients",
-                            e.target.value.split(", ")
+                            e.target.value.split(", 9")
                           )
                         }
-                        className="border p-2 mb-2 w-full"
+                        className="border p-2 mb-2 w-full bg-white text-black"
                         placeholder="Edit Ingredients (comma-separated)"
                       />
                       <button
                         onClick={handleSaveEdit}
-                        className="px-4 py-2 rounded-md bg-secondary text-textPrimary shadow-lg"
+                        className="px-4 py-2 rounded-md bg-sidebar text-textPrimary shadow-lg"
                       >
                         Save
                       </button>
@@ -222,8 +222,8 @@ export default function Favourites() {
                     <div>
                       <h3 className="font-bold">{recipe.recipe}</h3>
                       <p className="mt-2">
-                        <strong>Ingredients:</strong>
-                        <ul className="list-disc list-inside ml-5 mt-2">
+                        <strong> <u>Ingredients:</u></strong>
+                        <ul className="list-disc list-inside ml-5 mt-2 text-textPrimary">
                           {" "}
                           {/* List with bullets and spacing */}
                           {recipe.ingredients.map((ingredient, idx) => (
@@ -235,12 +235,12 @@ export default function Favourites() {
                           ))}
                         </ul>
                       </p>
-                      <p className="mt-2 mb-4">
-                        <strong>Instructions:</strong> {recipe.instructions}
+                      <p className="mt-2 mb-4 text-textPrimary">
+                        <strong><u>Instructions:</u></strong> {recipe.instructions}
                       </p>
                       <button
                         onClick={() => handleEdit(recipe, index)}
-                        className="px-4 py-2 rounded-md bg-secondary text-textPrimary shadow-lg mr-2"
+                        className="px-4 py-2 rounded-md bg-sidebar text-textPrimary shadow-lg mr-2"
                       >
                         <PencilIcon className="h-5 w-5 inline-block mr-2" />{" "}
                         Edit
