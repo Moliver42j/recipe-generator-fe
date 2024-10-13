@@ -323,7 +323,7 @@ export default function Configuration() {
           {/* Spices and Dietary Requirements */}
           <div className="mt-6">
             <h2 className="text-lg font-bold">
-              Add Spices or Dietary Requirements
+              Add Spices or Dietary Requirements/Preferences
             </h2>
 
             <div className="mb-4">
@@ -333,7 +333,7 @@ export default function Configuration() {
                 className="border p-2 rounded-md w-full bg-background text-foreground"
               >
                 <option value="spices">Spices</option>
-                <option value="diet">Dietary Requirements</option>
+                <option value="diet">Dietary Requirements/Preferences</option>
               </select>
             </div>
 
@@ -369,7 +369,7 @@ export default function Configuration() {
           </div>
 
           <div className="mt-6">
-            <h2 className="text-lg font-bold">Dietary Requirements</h2>
+            <h2 className="text-lg font-bold">Dietary Requirements/Preferences</h2>
             <ul className="list-disc list-inside">
               {dietaryRequirements.length > 0 ? (
                 dietaryRequirements.map((item, index) => (
@@ -377,7 +377,7 @@ export default function Configuration() {
                 ))
               ) : (
                 <li className="text-textSecondary">
-                  No dietary requirements added yet.
+                  No dietary requirements/Preferences added yet.
                 </li>
               )}
             </ul>
