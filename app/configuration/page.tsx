@@ -223,14 +223,6 @@ export default function Configuration() {
                 </li>
                 <li className="mb-4">
                   <Link
-                    href="/configuration"
-                    className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
-                  >
-                    Configuration
-                  </Link>
-                </li>
-                <li className="mb-4">
-                  <Link
                     href="/favourites"
                     className="block px-4 py-2 rounded bg-secondary text-textPrimary shadow-lg"
                   >
@@ -246,6 +238,7 @@ export default function Configuration() {
                   </Link>
                 </li>
               </ul>
+            </nav>
           </aside>
         )}
 
