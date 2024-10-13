@@ -246,7 +246,6 @@ export default function Configuration() {
                   </Link>
                 </li>
               </ul>
-            </nav>
           </aside>
         )}
 
