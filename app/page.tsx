@@ -252,7 +252,7 @@ export default function Home() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Enter fresh ingredients (comma-separated)"
-            className="border p-2 shadow-lg rounded-md w-full mb-2 bg-background text-foreground"
+            className="border p-2 shadow-lg rounded-md w-full mb-2 mt-5 bg-background text-foreground"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleAddIngredient();
