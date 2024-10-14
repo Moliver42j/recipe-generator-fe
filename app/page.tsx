@@ -17,7 +17,15 @@ import { getFromLocalStorage, saveToLocalStorage } from "./utils/storageUtils";
 interface Recipe {
   recipe: string;
   ingredients: string[];
-  instructions: string;
+  instructions: string[];
+  caloriesPerServing: {
+    Calories: string;
+    Protein: string;
+    Carbs: string;
+  };
+  link: string;
+  descriptionStart: string;
+  descriptionEnd: string;
   error: string;
 }
 
@@ -73,7 +81,7 @@ export default function Home() {
     const payload = {
       ingredients: [...ingredients],
       pantryItems: tickedPantryItems, // Only ticked items are sent
-      spices: spices.length === 0 ? "all" : spices,
+      spices: spices.length === 0 ? "" : spices,
       dietaryRestrictions: dietaryRequirements,
     };
 
@@ -367,12 +375,13 @@ export default function Home() {
           </button>
 
           {/* Display API Response */}
+          
+          {/* Display Recipe */}
           {recipe && (
             <div className="mt-6">
               <h2 className="text-lg font-bold">Generated Recipe:</h2>
-              <p className="mb-2">
-                Here is a recipe based on your ingredients:
-              </p>
+              <p className="mb-2">{recipe.descriptionStart}</p>
+
               <div className="p-4 rounded-md bg-background text-foreground">
                 <h3 className="font-bold mb-2">{recipe.recipe}</h3>
 
@@ -390,9 +399,40 @@ export default function Home() {
                 {recipe.instructions && (
                   <div>
                     <h4 className="font-semibold">Instructions:</h4>
-                    <p>{recipe.instructions}</p>
+                    <ul className="list-decimal list-inside mb-4">
+                      {recipe.instructions.map((instruction, index) => (
+                        <li key={index}>{instruction}</li>
+                      ))}
+                    </ul>
                   </div>
                 )}
+
+                {/* Calories and Nutrition Info */}
+                {recipe.caloriesPerServing && (
+                  <div>
+                    <h4 className="font-semibold">Nutritional Information:</h4>
+                    <p>Calories: {recipe.caloriesPerServing.Calories}</p>
+                    <p>Protein: {recipe.caloriesPerServing.Protein}</p>
+                    <p>Carbohydrates: {recipe.caloriesPerServing.Carbs}</p>
+                  </div>
+                )}
+
+                {/* Link to Full Recipe */}
+                {recipe.link && (
+                  <div className="mt-4">
+                    <a
+                      href={recipe.link}
+                      className="text-primary underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View full recipe
+                    </a>
+                  </div>
+                )}
+
+                {/* Final description */}
+                <p className="mt-4">{recipe.descriptionEnd}</p>
 
                 <button
                   onClick={handleAddToFavourites}
