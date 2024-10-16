@@ -9,6 +9,7 @@ import {
   HeartIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  ArrowPathIcon // Importing shuffle icon
 } from "@heroicons/react/24/solid";
 import { useHome } from "./homeContext";
 import { useConfig } from "./configContext";
@@ -45,6 +46,8 @@ export default function Home() {
   const [favourites, setFavourites] = useState<Recipe[]>([]); // State to store favourited recipes
   const [menuOpen, setMenuOpen] = useState(false);
   const [pantryOpen, setPantryOpen] = useState(true);
+  const [difficulty, setDifficulty] = useState("medium");
+  const [calories, setCalories] = useState("any");
 
   // Load cached data on mount
   useEffect(() => {
@@ -52,11 +55,15 @@ export default function Home() {
     const cachedPantryItems = getFromLocalStorage("pantryItems");
     const cachedPantryStatus = getFromLocalStorage("pantryItemStatus");
     const cachedFavourites = getFromLocalStorage("favourites");
+    const cachedDifficulty = getFromLocalStorage("difficulty") || "medium";
+    const cachedCalories = getFromLocalStorage("calories") || "any";
 
     if (cachedIngredients) setIngredients(cachedIngredients);
     if (cachedPantryItems) setPantryItems(cachedPantryItems);
     if (cachedPantryStatus) setPantryItemStatus(cachedPantryStatus);
     if (cachedFavourites) setFavourites(cachedFavourites);
+    setDifficulty(cachedDifficulty);
+    setCalories(cachedCalories);
   }, [setIngredients, setPantryItems, setPantryItemStatus]);
 
   const handleAddIngredient = () => {
@@ -83,6 +90,9 @@ export default function Home() {
       pantryItems: tickedPantryItems, // Only ticked items are sent
       spices: spices.length === 0 ? "" : spices,
       dietaryRestrictions: dietaryRequirements,
+      difficulty, // Add difficulty to payload
+      calories, // Add calorie preference to payload
+      recipeToSkip: recipe?.recipe || "" // If a recipe exists, send it as recipeToSkip
     };
 
     try {
@@ -198,7 +208,6 @@ export default function Home() {
                 </Link>
               </li>
               <li className="mb-4">
-                {/* Export page is highlighted with bg-secondary */}
                 <Link
                   href="/export"
                   className="hover:text-gray-300 p-2 rounded-md block"
@@ -342,7 +351,46 @@ export default function Home() {
             )}
           </div>
 
-          {/* Generate Recipe Button */}
+          {/* Difficulty and Calorie Preferences */}
+          <div className="mt-6">
+            <h3 className="font-semibold">
+              <u>Recipe Preferences</u>
+            </h3>
+            {/* Difficulty Select */}
+            <label className="block mt-4">
+              <span className="font-semibold">Difficulty:</span>
+              <select
+                value={difficulty}
+                onChange={(e) => {
+                  setDifficulty(e.target.value);
+                  saveToLocalStorage("difficulty", e.target.value);
+                }}
+                className="border p-2 rounded-md w-full bg-background text-foreground mt-1"
+              >
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="complex">Complex</option>
+              </select>
+            </label>
+
+            {/* Calorie Preference Toggle */}
+            <label className="block mt-4">
+              <span className="font-semibold">Calorie Preference:</span>
+              <select
+                value={calories}
+                onChange={(e) => {
+                  setCalories(e.target.value);
+                  saveToLocalStorage("calories", e.target.value);
+                }}
+                className="border p-2 rounded-md w-full bg-background text-foreground mt-1"
+              >
+                <option value="any">Any</option>
+                <option value="low calorie">Low Calorie</option>
+              </select>
+            </label>
+          </div>
+
+          {/* Generate/Shuffle Recipe Button */}
           <button
             onClick={handleGenerateRecipe}
             className="px-4 py-2 rounded-md mt-4 flex items-center justify-center bg-secondary text-textPrimary shadow-lg"
@@ -369,6 +417,10 @@ export default function Home() {
                   d="M4 12a8 8 0 018-8v4l4-4-4-4v4a8 8 0 100 16 8 8 0 01-8-8z"
                 ></path>
               </svg>
+            ) : recipe ? (
+              <>
+                <ArrowPathIcon className="h-5 w-5 mr-2" /> Shuffle
+              </>
             ) : (
               "Generate Recipe"
             )}

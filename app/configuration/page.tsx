@@ -32,21 +32,37 @@ export default function Configuration() {
   const [input, setInput] = useState("");
   const [category, setCategory] = useState("spices");
   const [pantryOpen, setPantryOpen] = useState(true); // State to control pantry visibility
+  const [difficulty, setDifficulty] = useState("medium"); // Difficulty state
+  const [calorieContent, setCalorieContent] = useState("any"); // Calorie content state
 
   // Load cached data on component mount
   useEffect(() => {
     const cachedPantryItems = getFromLocalStorage("pantryItems");
     const cachedPantryItemStatus = getFromLocalStorage("pantryItemStatus");
     const cachedSpices = getFromLocalStorage("spices");
-    const cachedDietaryRequirements =
-      getFromLocalStorage("dietaryRequirements");
+    const cachedDietaryRequirements = getFromLocalStorage("dietaryRequirements");
+    const cachedDifficulty = getFromLocalStorage("difficulty") || "medium"; // Default to 'medium'
+    const cachedCalorieContent = getFromLocalStorage("calorieContent") || "any"; // Default to 'any'
 
     if (cachedPantryItems) setPantryItems(cachedPantryItems);
     if (cachedPantryItemStatus) setPantryItemStatus(cachedPantryItemStatus);
     if (cachedSpices) setSpices(cachedSpices);
-    if (cachedDietaryRequirements)
-      setDietaryRequirements(cachedDietaryRequirements);
+    if (cachedDietaryRequirements) setDietaryRequirements(cachedDietaryRequirements);
+    setDifficulty(cachedDifficulty);
+    setCalorieContent(cachedCalorieContent);
   }, [setPantryItems, setPantryItemStatus, setSpices, setDietaryRequirements]);
+
+  // Handle difficulty selection
+  const handleDifficultyChange = (newDifficulty: string) => {
+    setDifficulty(newDifficulty);
+    saveToLocalStorage("difficulty", newDifficulty); // Cache the difficulty setting
+  };
+
+  // Handle calorie content selection
+  const handleCalorieContentChange = (newContent: string) => {
+    setCalorieContent(newContent);
+    saveToLocalStorage("calorieContent", newContent); // Cache the calorie content setting
+  };
 
   // Handle checkbox toggle for pantry items
   const handleCheckboxChange = (item: string) => {
@@ -354,6 +370,48 @@ export default function Configuration() {
             <p className="text-sm text-textSecondary mt-1">
               Enter multiple items separated by commas.
             </p>
+          </div>
+          {/* Difficulty and Calorie Content */}
+          <div className="mt-6">
+            <h2 className="text-lg font-bold">Difficulty</h2>
+            <div className="flex space-x-4">
+              <button
+                onClick={() => handleDifficultyChange("easy")}
+                className={`px-4 py-2 rounded-md ${difficulty === "easy" ? "bg-secondary" : "bg-background"} text-textPrimary shadow-lg`}
+              >
+                Easy
+              </button>
+              <button
+                onClick={() => handleDifficultyChange("medium")}
+                className={`px-4 py-2 rounded-md ${difficulty === "medium" ? "bg-secondary" : "bg-background"} text-textPrimary shadow-lg`}
+              >
+                Medium
+              </button>
+              <button
+                onClick={() => handleDifficultyChange("complex")}
+                className={`px-4 py-2 rounded-md ${difficulty === "complex" ? "bg-secondary" : "bg-background"} text-textPrimary shadow-lg`}
+              >
+                Complex
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <h2 className="text-lg font-bold">Calorie Content</h2>
+            <div className="flex space-x-4">
+              <button
+                onClick={() => handleCalorieContentChange("low calorie")}
+                className={`px-4 py-2 rounded-md ${calorieContent === "low calorie" ? "bg-secondary" : "bg-background"} text-textPrimary shadow-lg`}
+              >
+                Low Calorie
+              </button>
+              <button
+                onClick={() => handleCalorieContentChange("any")}
+                className={`px-4 py-2 rounded-md ${calorieContent === "any" ? "bg-secondary" : "bg-background"} text-textPrimary shadow-lg`}
+              >
+                Any
+              </button>
+            </div>
           </div>
 
           {/* Display Spices and Dietary Requirements */}
