@@ -121,6 +121,22 @@ export default function Configuration() {
     saveToLocalStorage("pantryItemStatus", updatedStatus); // Update the cached status
   };
 
+  // Handle removing dietary requirements
+  const handleRemoveDietaryRequirement = (requirement: string) => {
+    const updatedDietaryRequirements = dietaryRequirements.filter(
+      (item) => item !== requirement
+    );
+    setDietaryRequirements(updatedDietaryRequirements);
+    saveToLocalStorage("dietaryRequirements", updatedDietaryRequirements); // Cache the updated dietary requirements
+  };
+
+  // Handle removing spices
+  const handleRemoveSpice = (spice: string) => {
+    const updatedSpices = spices.filter((item) => item !== spice);
+    setSpices(updatedSpices);
+    saveToLocalStorage("spices", updatedSpices); // Cache the updated spices
+  };
+
   // Handle adding spices and dietary requirements (supports comma-separated values)
   const handleAddItem = () => {
     if (input.trim() === "") return;
@@ -371,6 +387,7 @@ export default function Configuration() {
               Enter multiple items separated by commas.
             </p>
           </div>
+
           {/* Difficulty and Calorie Content */}
           <div className="mt-6">
             <h2 className="text-lg font-bold">Difficulty</h2>
@@ -414,24 +431,43 @@ export default function Configuration() {
             </div>
           </div>
 
-          {/* Display Spices and Dietary Requirements */}
+          {/* Display Spices */}
           <div className="mt-6">
             <h2 className="text-lg font-bold">Spices</h2>
             <ul className="list-disc list-inside">
               {spices.length > 0 ? (
-                spices.map((item, index) => <li key={index}>{item}</li>)
+                spices.map((item, index) => (
+                  <li key={index} className="flex items-center justify-between">
+                    <span>{item}</span>
+                    <button
+                      onClick={() => handleRemoveSpice(item)}
+                      className="text-textSecondary hover:text-red-600"
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  </li>
+                ))
               ) : (
                 <li className="text-textSecondary">No spices added yet.</li>
               )}
             </ul>
           </div>
 
+          {/* Display Dietary Requirements */}
           <div className="mt-6">
             <h2 className="text-lg font-bold">Dietary Requirements/Preferences</h2>
             <ul className="list-disc list-inside">
               {dietaryRequirements.length > 0 ? (
                 dietaryRequirements.map((item, index) => (
-                  <li key={index}>{item}</li>
+                  <li key={index} className="flex items-center justify-between">
+                    <span>{item}</span>
+                    <button
+                      onClick={() => handleRemoveDietaryRequirement(item)}
+                      className="text-textSecondary hover:text-red-600"
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  </li>
                 ))
               ) : (
                 <li className="text-textSecondary">
