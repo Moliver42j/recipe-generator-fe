@@ -13,7 +13,15 @@ import { getFromLocalStorage, saveToLocalStorage } from "../utils/storageUtils";
 interface Recipe {
   recipe: string;
   ingredients: string[];
-  instructions: string;
+  instructions: string[];
+  caloriesPerServing?: {
+    calories: string;
+    protein: string;
+    carbs: string;
+  };
+  link?: string;
+  descriptionStart?: string;
+  descriptionEnd?: string;
 }
 
 export default function Favourites() {
@@ -123,7 +131,6 @@ export default function Favourites() {
                 </Link>
               </li>
               <li className="mb-4">
-                {/* Export page is highlighted with bg-secondary */}
                 <Link
                   href="/export"
                   className="hover:text-gray-300 p-2 rounded-md block"
@@ -177,7 +184,7 @@ export default function Favourites() {
             <p>No favourites added yet.</p>
           ) : (
             <ul>
-              {favourites.map((recipe, index) => ( 
+              {favourites.map((recipe, index) => (
                 <li key={index} className="mb-4 p-4 border rounded-md shadow bg-secondary text-textPrimary">
                   {editingRecipe && editIndex === index ? (
                     // Editing mode
@@ -192,9 +199,9 @@ export default function Favourites() {
                         placeholder="Edit Recipe Title"
                       />
                       <textarea
-                        value={editingRecipe.instructions}
+                        value={editingRecipe.instructions.join("\n")}
                         onChange={(e) =>
-                          handleEditChange("instructions", e.target.value)
+                          handleEditChange("instructions", e.target.value.split("\n"))
                         }
                         className="border p-2 mb-2 w-full bg-white text-black"
                         placeholder="Edit Recipe Instructions"
@@ -204,7 +211,7 @@ export default function Favourites() {
                         onChange={(e) =>
                           handleEditChange(
                             "ingredients",
-                            e.target.value.split(", 9")
+                            e.target.value.split(", ")
                           )
                         }
                         className="border p-2 mb-2 w-full bg-white text-black"
@@ -221,35 +228,59 @@ export default function Favourites() {
                     // Display the recipe
                     <div>
                       <h3 className="font-bold">{recipe.recipe}</h3>
+                      
                       <p className="mt-2">
-                        <strong> <u>Ingredients:</u></strong>
+                        <strong><u>Ingredients:</u></strong>
                         <ul className="list-disc list-inside ml-5 mt-2 text-textPrimary">
-                          {" "}
-                          {/* List with bullets and spacing */}
                           {recipe.ingredients.map((ingredient, idx) => (
-                            <li key={idx} className="mb-1">
-                              {" "}
-                              {/* Add margin-bottom to separate ingredients */}
-                              {ingredient}
-                            </li>
+                            <li key={idx} className="mb-1">{ingredient}</li>
                           ))}
                         </ul>
                       </p>
                       <p className="mt-2 mb-4 text-textPrimary">
-                        <strong><u>Instructions:</u></strong> {recipe.instructions}
+                        <strong><u>Instructions:</u></strong>
+                        <ul className="list-decimal list-inside">
+                          {recipe.instructions.map((instruction, idx) => (
+                            <li key={idx} className="mb-1">{instruction}</li>
+                          ))}
+                        </ul>
                       </p>
+
+                      {/* Optional Calories Per Serving */}
+                      {recipe.caloriesPerServing && (
+                        <div className="mt-2 mb-4">
+                          <strong><u>Calories Per Serving:</u></strong>
+                          <p>Calories: {recipe.caloriesPerServing.calories}</p>
+                          <p>Protein: {recipe.caloriesPerServing.protein}</p>
+                          <p>Carbs: {recipe.caloriesPerServing.carbs}</p>
+                        </div>
+                      )}
+
+                      {/* Optional Link to Full Recipe */}
+                      {recipe.link && (
+                        <div className="mt-2">
+                          <a
+                            href={recipe.link}
+                            className="text-primary underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            View full recipe
+                          </a>
+                        </div>
+                      )}
                       <button
                         onClick={() => handleEdit(recipe, index)}
                         className="px-4 py-2 rounded-md bg-sidebar text-textPrimary shadow-lg mr-2"
                       >
-                        <PencilIcon className="h-5 w-5 inline-block mr-2" />{" "}
+                        <PencilIcon className="h-5 w-5 inline-block mr-2" />
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(index)}
                         className="px-4 py-2 rounded-md bg-red-600 text-white shadow-lg"
                       >
-                        <TrashIcon className="h-5 w-5 inline-block mr-2" />{" "}
+                        <TrashIcon className="h-5 w-5 inline-block mr-2" />
                         Delete
                       </button>
                     </div>

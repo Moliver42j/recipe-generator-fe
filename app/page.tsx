@@ -19,9 +19,9 @@ interface Recipe {
   ingredients: string[];
   instructions: string[];
   caloriesPerServing: {
-    Calories: string;
-    Protein: string;
-    Carbs: string;
+    calories: string;
+    protein: string;
+    carbs: string;
   };
   link: string;
   descriptionStart: string;
@@ -380,11 +380,10 @@ export default function Home() {
           {recipe && (
             <div className="mt-6">
               <h2 className="text-lg font-bold">Generated Recipe:</h2>
+              <h3 className="font-bold mb-2">{recipe.recipe}</h3>
               <p className="mb-2">{recipe.descriptionStart}</p>
 
               <div className="p-4 rounded-md bg-background text-foreground">
-                <h3 className="font-bold mb-2">{recipe.recipe}</h3>
-
                 {recipe.ingredients && (
                   <div>
                     <h4 className="font-semibold">Ingredients:</h4>
@@ -411,23 +410,9 @@ export default function Home() {
                 {recipe.caloriesPerServing && (
                   <div>
                     <h4 className="font-semibold">Nutritional Information:</h4>
-                    <p>Calories: {recipe.caloriesPerServing.Calories}</p>
-                    <p>Protein: {recipe.caloriesPerServing.Protein}</p>
-                    <p>Carbohydrates: {recipe.caloriesPerServing.Carbs}</p>
-                  </div>
-                )}
-
-                {/* Link to Full Recipe */}
-                {recipe.link && (
-                  <div className="mt-4">
-                    <a
-                      href={recipe.link}
-                      className="text-primary underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View full recipe
-                    </a>
+                    <p>Calories: {recipe.caloriesPerServing.calories}</p>
+                    <p>Protein: {recipe.caloriesPerServing.protein}</p>
+                    <p>Carbohydrates: {recipe.caloriesPerServing.carbs}</p>
                   </div>
                 )}
 
