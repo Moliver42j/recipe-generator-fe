@@ -10,10 +10,7 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from "@heroicons/react/24/solid"; // Import Chevron icons for dropdown
-import {
-  getFromLocalStorage,
-  saveToLocalStorage,
-} from "../utils/storageUtils";
+import { getFromLocalStorage, saveToLocalStorage } from "../utils/storageUtils";
 
 export default function Configuration() {
   const {
@@ -40,17 +37,22 @@ export default function Configuration() {
     const cachedPantryItems = getFromLocalStorage("pantryItems");
     const cachedPantryItemStatus = getFromLocalStorage("pantryItemStatus");
     const cachedSpices = getFromLocalStorage("spices");
-    const cachedDietaryRequirements = getFromLocalStorage("dietaryRequirements");
-    const cachedDifficulty = getFromLocalStorage("difficulty") || "medium"; // Default to 'medium'
-    const cachedCalorieContent = getFromLocalStorage("calorieContent") || "any"; // Default to 'any'
-
+    const cachedDietaryRequirements = getFromLocalStorage("dietaryRequirements") || [];
+  
     if (cachedPantryItems) setPantryItems(cachedPantryItems);
     if (cachedPantryItemStatus) setPantryItemStatus(cachedPantryItemStatus);
     if (cachedSpices) setSpices(cachedSpices);
-    if (cachedDietaryRequirements) setDietaryRequirements(cachedDietaryRequirements);
-    setDifficulty(cachedDifficulty);
-    setCalorieContent(cachedCalorieContent);
+  
+    // Default to metric if no measurement preference exists
+    if (!cachedDietaryRequirements.includes("use metric measurements") && 
+        !cachedDietaryRequirements.includes("use imperial measurements")) {
+      cachedDietaryRequirements.push("use metric measurements");
+      saveToLocalStorage("dietaryRequirements", cachedDietaryRequirements);
+    }
+  
+    setDietaryRequirements(cachedDietaryRequirements);
   }, [setPantryItems, setPantryItemStatus, setSpices, setDietaryRequirements]);
+  
 
   // Handle difficulty selection
   const handleDifficultyChange = (newDifficulty: string) => {
@@ -170,6 +172,33 @@ export default function Configuration() {
     setInput("");
   };
 
+  const handleMeasurementPreference = (preference: string) => {
+    let updatedDietaryRequirements = [...dietaryRequirements];
+  
+    // Remove the opposite preference if it exists
+    if (preference === "use metric measurements") {
+      updatedDietaryRequirements = updatedDietaryRequirements.filter(
+        (req) => req !== "use imperial measurements"
+      );
+    } else if (preference === "use imperial measurements") {
+      updatedDietaryRequirements = updatedDietaryRequirements.filter(
+        (req) => req !== "use metric measurements"
+      );
+    }
+  
+    // Toggle the selected preference
+    if (updatedDietaryRequirements.includes(preference)) {
+      updatedDietaryRequirements = updatedDietaryRequirements.filter(
+        (req) => req !== preference
+      );
+    } else {
+      updatedDietaryRequirements.push(preference);
+    }
+  
+    setDietaryRequirements(updatedDietaryRequirements);
+    saveToLocalStorage("dietaryRequirements", updatedDietaryRequirements); // Cache the updated dietary requirements
+  };  
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       {/* Banner Section */}
@@ -283,9 +312,12 @@ export default function Configuration() {
           {/* Add Custom Pantry Items */}
           <div className="mt-6">
             <p className="text-textSecondary">
-              Add custom pantry items to track your inventory. This is where you put Items that you always have in your cupboards.
+              Add custom pantry items to track your inventory. This is where you
+              put Items that you always have in your cupboards.
             </p>
-            <p className="text-textSecondary">You can also mark them as available or not available. </p>
+            <p className="text-textSecondary">
+              You can also mark them as available or not available.{" "}
+            </p>
             <h2 className="text-lg font-bold">Add Pantry Items</h2>
             <input
               type="text"
@@ -394,19 +426,25 @@ export default function Configuration() {
             <div className="flex space-x-4">
               <button
                 onClick={() => handleDifficultyChange("easy")}
-                className={`px-4 py-2 rounded-md ${difficulty === "easy" ? "bg-secondary" : "bg-background"} text-textPrimary shadow-lg`}
+                className={`px-4 py-2 rounded-md ${
+                  difficulty === "easy" ? "bg-secondary" : "bg-background"
+                } text-textPrimary shadow-lg`}
               >
                 Easy
               </button>
               <button
                 onClick={() => handleDifficultyChange("medium")}
-                className={`px-4 py-2 rounded-md ${difficulty === "medium" ? "bg-secondary" : "bg-background"} text-textPrimary shadow-lg`}
+                className={`px-4 py-2 rounded-md ${
+                  difficulty === "medium" ? "bg-secondary" : "bg-background"
+                } text-textPrimary shadow-lg`}
               >
                 Medium
               </button>
               <button
                 onClick={() => handleDifficultyChange("complex")}
-                className={`px-4 py-2 rounded-md ${difficulty === "complex" ? "bg-secondary" : "bg-background"} text-textPrimary shadow-lg`}
+                className={`px-4 py-2 rounded-md ${
+                  difficulty === "complex" ? "bg-secondary" : "bg-background"
+                } text-textPrimary shadow-lg`}
               >
                 Complex
               </button>
@@ -418,15 +456,51 @@ export default function Configuration() {
             <div className="flex space-x-4">
               <button
                 onClick={() => handleCalorieContentChange("low calorie")}
-                className={`px-4 py-2 rounded-md ${calorieContent === "low calorie" ? "bg-secondary" : "bg-background"} text-textPrimary shadow-lg`}
+                className={`px-4 py-2 rounded-md ${
+                  calorieContent === "low calorie"
+                    ? "bg-secondary"
+                    : "bg-background"
+                } text-textPrimary shadow-lg`}
               >
                 Low Calorie
               </button>
               <button
                 onClick={() => handleCalorieContentChange("any")}
-                className={`px-4 py-2 rounded-md ${calorieContent === "any" ? "bg-secondary" : "bg-background"} text-textPrimary shadow-lg`}
+                className={`px-4 py-2 rounded-md ${
+                  calorieContent === "any" ? "bg-secondary" : "bg-background"
+                } text-textPrimary shadow-lg`}
               >
                 Any
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <h2 className="text-lg font-bold">Units</h2>
+            <div className="flex space-x-4">
+              <button
+                onClick={() =>
+                  handleMeasurementPreference("use metric measurements")
+                }
+                className={`px-4 py-2 rounded-md ${
+                  dietaryRequirements.includes("use metric measurements")
+                    ? "bg-secondary"
+                    : "bg-background"
+                } text-textPrimary shadow-lg`}
+              >
+                Metric
+              </button>
+              <button
+                onClick={() =>
+                  handleMeasurementPreference("use imperial measurements")
+                }
+                className={`px-4 py-2 rounded-md ${
+                  dietaryRequirements.includes("use imperial measurements")
+                    ? "bg-secondary"
+                    : "bg-background"
+                } text-textPrimary shadow-lg`}
+              >
+                Imperial
               </button>
             </div>
           </div>
@@ -455,7 +529,9 @@ export default function Configuration() {
 
           {/* Display Dietary Requirements */}
           <div className="mt-6">
-            <h2 className="text-lg font-bold">Dietary Requirements/Preferences</h2>
+            <h2 className="text-lg font-bold">
+              Dietary Requirements/Preferences
+            </h2>
             <ul className="list-disc list-inside">
               {dietaryRequirements.length > 0 ? (
                 dietaryRequirements.map((item, index) => (
