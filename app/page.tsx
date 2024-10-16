@@ -500,14 +500,15 @@ export default function Home() {
 
                 {/* Final description */}
                 <p className="mt-4">{recipe.descriptionEnd}</p>
-
+                {recipe && (
                 <button
                   onClick={handleAddToFavourites}
                   className="px-4 py-2 mt-2 rounded-md bg-secondary text-textPrimary shadow-lg"
                 >
                   <HeartIcon className="h-5 w-5 inline-block mr-2" /> Add to
                   Favourites
-                </button>
+                </button>)}
+
               </div>
             </div>
           )}
