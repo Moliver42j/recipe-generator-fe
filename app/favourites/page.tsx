@@ -6,7 +6,9 @@ import {
   PencilIcon,
   Bars3Icon,
   XMarkIcon,
-} from "@heroicons/react/24/solid";
+  ChevronDownIcon,
+  ChevronUpIcon,
+} from "@heroicons/react/24/solid"; // Added Chevron icons for expand/collapse
 import Link from "next/link";
 import { getFromLocalStorage, saveToLocalStorage } from "../utils/storageUtils";
 
@@ -26,6 +28,7 @@ interface Recipe {
 
 export default function Favourites() {
   const [favourites, setFavourites] = useState<Recipe[]>([]); // Store favourite recipes
+  const [collapsed, setCollapsed] = useState<boolean[]>([]); // Track collapsed state for each recipe
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null); // For editing a recipe
   const [editIndex, setEditIndex] = useState<number | null>(null); // Track which recipe is being edited
   const [menuOpen, setMenuOpen] = useState(false); // For mobile menu
@@ -33,8 +36,18 @@ export default function Favourites() {
   // Load favourites from local storage on component mount
   useEffect(() => {
     const cachedFavourites = getFromLocalStorage("favourites");
-    if (cachedFavourites) setFavourites(cachedFavourites);
+    if (cachedFavourites) {
+      setFavourites(cachedFavourites);
+      setCollapsed(cachedFavourites.map(() => true)); // Initially collapse all items
+    }
   }, []);
+
+  // Function to toggle recipe details visibility
+  const toggleCollapse = (index: number) => {
+    setCollapsed((prev) =>
+      prev.map((isCollapsed, i) => (i === index ? !isCollapsed : isCollapsed))
+    );
+  };
 
   // Function to delete a recipe from favourites
   const handleDelete = (recipeIndex: number) => {
@@ -42,6 +55,7 @@ export default function Favourites() {
       (_, index) => index !== recipeIndex
     );
     setFavourites(updatedFavourites);
+    setCollapsed(updatedFavourites.map(() => true)); // Update collapse state after deletion
     saveToLocalStorage("favourites", updatedFavourites);
   };
 
@@ -186,103 +200,116 @@ export default function Favourites() {
             <ul>
               {favourites.map((recipe, index) => (
                 <li key={index} className="mb-4 p-4 border rounded-md shadow bg-secondary text-textPrimary">
-                  {editingRecipe && editIndex === index ? (
-                    // Editing mode
-                    <div>
-                      <input
-                        type="text"
-                        value={editingRecipe.recipe}
-                        onChange={(e) =>
-                          handleEditChange("recipe", e.target.value)
-                        }
-                        className="border p-2 mb-2 w-full bg-white text-black"
-                        placeholder="Edit Recipe Title"
-                      />
-                      <textarea
-                        value={editingRecipe.instructions.join("\n")}
-                        onChange={(e) =>
-                          handleEditChange("instructions", e.target.value.split("\n"))
-                        }
-                        className="border p-2 mb-2 w-full bg-white text-black"
-                        placeholder="Edit Recipe Instructions"
-                      />
-                      <textarea
-                        value={editingRecipe.ingredients.join(", ")}
-                        onChange={(e) =>
-                          handleEditChange(
-                            "ingredients",
-                            e.target.value.split(", ")
-                          )
-                        }
-                        className="border p-2 mb-2 w-full bg-white text-black"
-                        placeholder="Edit Ingredients (comma-separated)"
-                      />
-                      <button
-                        onClick={handleSaveEdit}
-                        className="px-4 py-2 rounded-md bg-sidebar text-textPrimary shadow-lg"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  ) : (
-                    // Display the recipe
-                    <div>
-                      <h3 className="font-bold">{recipe.recipe}</h3>
-                      
-                      <p className="mt-2">
-                        <strong><u>Ingredients:</u></strong>
-                        <ul className="list-disc list-inside ml-5 mt-2 text-textPrimary">
-                          {recipe.ingredients.map((ingredient, idx) => (
-                            <li key={idx} className="mb-1">{ingredient}</li>
-                          ))}
-                        </ul>
-                      </p>
-                      <p className="mt-2 mb-4 text-textPrimary">
-                        <strong><u>Instructions:</u></strong>
-                        <ul className="list-decimal list-inside">
-                          {recipe.instructions.map((instruction, idx) => (
-                            <li key={idx} className="mb-1">{instruction}</li>
-                          ))}
-                        </ul>
-                      </p>
+                  {/* Recipe Title with toggle button */}
+                  <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleCollapse(index)}>
+                    <h3 className="font-bold">{recipe.recipe}</h3>
+                    {collapsed[index] ? (
+                      <ChevronDownIcon className="h-5 w-5" />
+                    ) : (
+                      <ChevronUpIcon className="h-5 w-5" />
+                    )}
+                  </div>
 
-                      {/* Optional Calories Per Serving */}
-                      {recipe.caloriesPerServing && (
-                        <div className="mt-2 mb-4">
-                          <strong><u>Calories Per Serving:</u></strong>
-                          <p>Calories: {recipe.caloriesPerServing.calories}</p>
-                          <p>Protein: {recipe.caloriesPerServing.protein}</p>
-                          <p>Carbs: {recipe.caloriesPerServing.carbs}</p>
-                        </div>
-                      )}
-
-                      {/* Optional Link to Full Recipe */}
-                      {recipe.link && (
-                        <div className="mt-2">
-                          <a
-                            href={recipe.link}
-                            className="text-primary underline"
-                            target="_blank"
-                            rel="noopener noreferrer"
+                  {/* Collapsible Recipe Details */}
+                  {!collapsed[index] && (
+                    <div>
+                      {editingRecipe && editIndex === index ? (
+                        // Editing mode
+                        <div>
+                          <input
+                            type="text"
+                            value={editingRecipe.recipe}
+                            onChange={(e) =>
+                              handleEditChange("recipe", e.target.value)
+                            }
+                            className="border p-2 mb-2 w-full bg-white text-black"
+                            placeholder="Edit Recipe Title"
+                          />
+                          <textarea
+                            value={editingRecipe.instructions.join("\n")}
+                            onChange={(e) =>
+                              handleEditChange("instructions", e.target.value.split("\n"))
+                            }
+                            className="border p-2 mb-2 w-full bg-white text-black"
+                            placeholder="Edit Recipe Instructions"
+                          />
+                          <textarea
+                            value={editingRecipe.ingredients.join(", ")}
+                            onChange={(e) =>
+                              handleEditChange(
+                                "ingredients",
+                                e.target.value.split(", ")
+                              )
+                            }
+                            className="border p-2 mb-2 w-full bg-white text-black"
+                            placeholder="Edit Ingredients (comma-separated)"
+                          />
+                          <button
+                            onClick={handleSaveEdit}
+                            className="px-4 py-2 rounded-md bg-sidebar text-textPrimary shadow-lg"
                           >
-                            View full recipe
-                          </a>
+                            Save
+                          </button>
+                        </div>
+                      ) : (
+                        // Display the recipe
+                        <div>
+                          <p className="mt-2">
+                            <strong><u>Ingredients:</u></strong>
+                            <ul className="list-disc list-inside ml-5 mt-2 text-textPrimary">
+                              {recipe.ingredients.map((ingredient, idx) => (
+                                <li key={idx} className="mb-1">{ingredient}</li>
+                              ))}
+                            </ul>
+                          </p>
+                          <p className="mt-2 mb-4 text-textPrimary">
+                            <strong><u>Instructions:</u></strong>
+                            <ul className="list-decimal list-inside">
+                              {recipe.instructions.map((instruction, idx) => (
+                                <li key={idx} className="mb-1">{instruction}</li>
+                              ))}
+                            </ul>
+                          </p>
+
+                          {/* Optional Calories Per Serving */}
+                          {recipe.caloriesPerServing && (
+                            <div className="mt-2 mb-4">
+                              <strong><u>Calories Per Serving:</u></strong>
+                              <p>Calories: {recipe.caloriesPerServing.calories}</p>
+                              <p>Protein: {recipe.caloriesPerServing.protein}</p>
+                              <p>Carbs: {recipe.caloriesPerServing.carbs}</p>
+                            </div>
+                          )}
+
+                          {/* Optional Link to Full Recipe */}
+                          {recipe.link && (
+                            <div className="mt-2">
+                              <a
+                                href={recipe.link}
+                                className="text-primary underline"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                View full recipe
+                              </a>
+                            </div>
+                          )}
+                          <button
+                            onClick={() => handleEdit(recipe, index)}
+                            className="px-4 py-2 rounded-md bg-sidebar text-textPrimary shadow-lg mr-2"
+                          >
+                            <PencilIcon className="h-5 w-5 inline-block mr-2" />
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(index)}
+                            className="px-4 py-2 rounded-md bg-red-600 text-white shadow-lg"
+                          >
+                            <TrashIcon className="h-5 w-5 inline-block mr-2" />
+                            Delete
+                          </button>
                         </div>
                       )}
-                      <button
-                        onClick={() => handleEdit(recipe, index)}
-                        className="px-4 py-2 rounded-md bg-sidebar text-textPrimary shadow-lg mr-2"
-                      >
-                        <PencilIcon className="h-5 w-5 inline-block mr-2" />
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(index)}
-                        className="px-4 py-2 rounded-md bg-red-600 text-white shadow-lg"
-                      >
-                        <TrashIcon className="h-5 w-5 inline-block mr-2" />
-                        Delete
-                      </button>
                     </div>
                   )}
                 </li>

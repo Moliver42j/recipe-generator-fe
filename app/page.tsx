@@ -9,7 +9,7 @@ import {
   HeartIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  ArrowPathIcon // Importing shuffle icon
+  ArrowPathIcon, // Importing shuffle icon
 } from "@heroicons/react/24/solid";
 import { useHome } from "./homeContext";
 import { useConfig } from "./configContext";
@@ -43,9 +43,10 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
-  const [favourites, setFavourites] = useState<Recipe[]>([]); // State to store favourited recipes
+  const [favourites, setFavourites] = useState<Recipe[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [pantryOpen, setPantryOpen] = useState(true);
+  const [pantryOpen, setPantryOpen] = useState(false);
+  const [preferencesOpen, setPreferencesOpen] = useState(false); 
   const [difficulty, setDifficulty] = useState("medium");
   const [calories, setCalories] = useState("any");
 
@@ -71,7 +72,7 @@ export default function Home() {
       const newIngredients = input.split(",").map((ing) => ing.trim());
       const updatedIngredients = [...ingredients, ...newIngredients];
       setIngredients(updatedIngredients);
-      saveToLocalStorage("ingredients", updatedIngredients); // Cache the ingredients
+      saveToLocalStorage("ingredients", updatedIngredients);
       setInput("");
     }
   };
@@ -80,7 +81,6 @@ export default function Home() {
     setLoading(true);
     setRecipe(null);
 
-    // Only include pantry items that have a status of true
     const tickedPantryItems = pantryItems.filter(
       (item) => pantryItemStatus[item]
     );
@@ -92,7 +92,7 @@ export default function Home() {
       dietaryRestrictions: dietaryRequirements,
       difficulty, // Add difficulty to payload
       calories, // Add calorie preference to payload
-      recipeToSkip: recipe?.recipe || "" // If a recipe exists, send it as recipeToSkip
+      recipeToSkip: recipe?.recipe || "", // If a recipe exists, send it as recipeToSkip
     };
 
     try {
@@ -351,43 +351,73 @@ export default function Home() {
             )}
           </div>
 
-          {/* Difficulty and Calorie Preferences */}
+          {/* Recipe Preferences Section with Toggle */}
           <div className="mt-6">
-            <h3 className="font-semibold">
-              <u>Recipe Preferences</u>
-            </h3>
-            {/* Difficulty Select */}
-            <label className="block mt-4">
-              <span className="font-semibold">Difficulty:</span>
-              <select
-                value={difficulty}
-                onChange={(e) => {
-                  setDifficulty(e.target.value);
-                  saveToLocalStorage("difficulty", e.target.value);
-                }}
-                className="border p-2 rounded-md w-full bg-background text-foreground mt-1"
-              >
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="complex">Complex</option>
-              </select>
-            </label>
+            <div className="flex justify-between items-center">
+              <h3 className="font-semibold">
+                <u>Recipe Preferences</u>
+              </h3>
+              <button onClick={() => setPreferencesOpen(!preferencesOpen)}>
+                {preferencesOpen ? (
+                  <ChevronUpIcon className="h-5 w-5 text-primary" />
+                ) : (
+                  <ChevronDownIcon className="h-5 w-5 text-primary" />
+                )}
+              </button>
+            </div>
 
-            {/* Calorie Preference Toggle */}
-            <label className="block mt-4">
-              <span className="font-semibold">Calorie Preference:</span>
-              <select
-                value={calories}
-                onChange={(e) => {
-                  setCalories(e.target.value);
-                  saveToLocalStorage("calories", e.target.value);
-                }}
-                className="border p-2 rounded-md w-full bg-background text-foreground mt-1"
-              >
-                <option value="any">Any</option>
-                <option value="low calorie">Low Calorie</option>
-              </select>
-            </label>
+            {preferencesOpen && (
+              <div className="mt-4">
+                {/* Difficulty Select */}
+                <label className="block mt-4">
+                  <span className="font-semibold">Difficulty:</span>
+                  <select
+                    value={difficulty}
+                    onChange={(e) => {
+                      setDifficulty(e.target.value);
+                      saveToLocalStorage("difficulty", e.target.value);
+                    }}
+                    className="border p-2 rounded-md w-full bg-background text-foreground mt-1"
+                  >
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="complex">Complex</option>
+                  </select>
+                </label>
+
+                {/* Calorie Preference Toggle */}
+                <label className="block mt-4">
+                  <span className="font-semibold">Calorie Preference:</span>
+                  <select
+                    value={calories}
+                    onChange={(e) => {
+                      setCalories(e.target.value);
+                      saveToLocalStorage("calories", e.target.value);
+                    }}
+                    className="border p-2 rounded-md w-full bg-background text-foreground mt-1"
+                  >
+                    <option value="any">Any</option>
+                    <option value="low calorie">Low Calorie</option>
+                  </select>
+                </label>
+
+                {/* Dietary Requirements */}
+                <div className="mt-6">
+                  <h4 className="font-semibold">Dietary Requirements:</h4>
+                  <ul className="list-disc list-inside">
+                    {dietaryRequirements.length > 0 ? (
+                      dietaryRequirements.map((item, index) => (
+                        <li key={index}>{item}</li>
+                      ))
+                    ) : (
+                      <li className="text-textSecondary">
+                        No dietary requirements added.
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Generate/Shuffle Recipe Button */}
