@@ -1,0 +1,234 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "../node_modules/@tailwindcss/vite/node_modules/tailwindcss/theme.css" layer(theme);
+
+/* ── Dark mode: tie Tailwind dark: variants to the .dark class ──────── */
+/* Tailwind v4 defaults to prefers-color-scheme; override to use class   */
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-bg-primary: #f0fdf4;
+  --color-bg-secondary: rgba(255, 255, 255, 0.4);
+  --color-bg-tertiary: #dcfce7;
+  --color-surface-raised: rgba(255, 255, 255, 0.58);
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-inverse: #ffffff;
+  --color-accent: #16a34a;
+  --color-accent-hover: #15803d;
+  --color-accent-secondary: #34d399;
+  --color-cta: #16a34a;
+  --color-cta-hover: #15803d;
+  --color-cta-text: #ffffff;
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
+  --color-success: #16a34a;
+  --color-border: rgba(255, 255, 255, 0.6);
+  --color-sidebar-bg: rgba(255, 255, 255, 0.4);
+  --color-sidebar-text: #475569;
+  --color-sidebar-active: rgba(255, 255, 255, 0.7);
+  --color-sidebar-hover: rgba(255, 255, 255, 0.55);
+  --color-header-bg: rgba(255, 255, 255, 0.5);
+  --color-header-text: #0f172a;
+  --color-input-bg: rgba(255, 255, 255, 0.92);
+  --color-input-border: #a7f3d0;
+  --color-chip-accent-bg: #dcfce7;
+  --color-chip-accent-text: #14532d;
+  --color-chip-olive-bg: #dcfce7;
+  --color-chip-olive-text: #14532d;
+  --color-chip-amber-bg: #fef3c7;
+  --color-chip-amber-text: #a16207;
+  --color-chip-warm-bg: #fce7f3;
+  --color-chip-warm-text: #9d174d;
+  --color-chip-sky-bg: #dbeafe;
+  --color-chip-sky-text: #1e40af;
+  --color-card-shadow: 0 24px 60px rgba(21, 128, 61, 0.12), 0 10px 30px rgba(15, 23, 42, 0.06);
+  --color-card-shadow-lg: 0 30px 80px rgba(21, 128, 61, 0.18), 0 12px 36px rgba(15, 23, 42, 0.08);
+  --color-accent-glow: 0 12px 40px rgba(34, 197, 94, 0.28);
+  --color-glass-shadow: 0 20px 50px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Inter', system-ui, sans-serif;
+  --radius-sm: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+}
+
+@source "../index.html";
+@source "../src";
+
+html.dark,
+html.dark:root,
+html.dark :root {
+  --color-bg-primary: #030b05;
+  --color-bg-secondary: rgba(255, 255, 255, 0.05);
+  --color-bg-tertiary: rgba(255, 255, 255, 0.03);
+  --color-surface-raised: rgba(255, 255, 255, 0.08);
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-inverse: #030b05;
+  --color-accent: #4ade80;
+  --color-accent-hover: #86efac;
+  --color-accent-secondary: #6ee7b7;
+  --color-cta: #4ade80;
+  --color-cta-hover: #86efac;
+  --color-cta-text: #ffffff;
+  --color-danger: #ef4444;
+  --color-danger-hover: #f87171;
+  --color-success: #4ade80;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-sidebar-bg: rgba(0, 0, 0, 0.4);
+  --color-sidebar-text: #94a3b8;
+  --color-sidebar-active: rgba(74, 222, 128, 0.15);
+  --color-sidebar-hover: rgba(255, 255, 255, 0.07);
+  --color-header-bg: rgba(0, 0, 0, 0.4);
+  --color-header-text: #f1f5f9;
+  --color-input-bg: rgba(255, 255, 255, 0.05);
+  --color-input-border: rgba(255, 255, 255, 0.12);
+  --color-chip-accent-bg: rgba(20, 83, 45, 0.3);
+  --color-chip-accent-text: #86efac;
+  --color-chip-olive-bg: rgba(20, 83, 45, 0.3);
+  --color-chip-olive-text: #86efac;
+  --color-chip-amber-bg: rgba(161, 98, 7, 0.25);
+  --color-chip-amber-text: #fcd34d;
+  --color-chip-warm-bg: rgba(157, 23, 77, 0.25);
+  --color-chip-warm-text: #f9a8d4;
+  --color-chip-sky-bg: rgba(30, 64, 175, 0.25);
+  --color-chip-sky-text: #93c5fd;
+  --color-card-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  --color-card-shadow-lg: 0 30px 80px rgba(0, 0, 0, 0.5);
+  --color-accent-glow: 0 16px 48px rgba(74, 222, 128, 0.2);
+  --color-glass-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-bg-primary);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+  background-color: var(--color-bg-primary);
+  background-image:
+    radial-gradient(circle at top right, rgba(187, 247, 208, 0.9), transparent 30%),
+    radial-gradient(circle at bottom left, rgba(254, 240, 138, 0.55), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.6), transparent 40%);
+  background-attachment: fixed;
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+html.dark body {
+  background-image:
+    radial-gradient(circle at top right, rgba(5, 46, 22, 0.8), transparent 30%),
+    radial-gradient(circle at bottom left, rgba(28, 25, 0, 0.4), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 50%);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.card {
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--color-glass-shadow);
+  backdrop-filter: blur(28px);
+}
+
+.card-section {
+  padding: 1.5rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: rgba(34, 197, 94, 0.22);
+  color: var(--color-text-primary);
+}
+
+.glass-card {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  box-shadow: var(--color-glass-shadow);
+  backdrop-filter: blur(28px);
+}
+
+.gradient-green-cta {
+  background: linear-gradient(135deg, #16a34a 0%, #22c55e 45%, #34d399 100%);
+}
+
+.gradient-green-badge {
+  background: linear-gradient(135deg, #166534 0%, #16a34a 50%, #34d399 100%);
+}
+
+.mesh-blob {
+  position: fixed;
+  pointer-events: none;
+  border-radius: 9999px;
+}
+
+.gradient-text-green {
+  background: linear-gradient(135deg, #166534 0%, #16a34a 45%, #34d399 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+input,
+textarea {
+  color: var(--color-text-primary);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-secondary);
+}
+
+button {
+  font: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(22, 163, 74, 0.45);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(21, 128, 61, 0.7);
+}
