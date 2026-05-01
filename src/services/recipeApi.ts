@@ -10,6 +10,7 @@ export interface GenerateRecipePayload {
   pantryItems: string[];
   spices: string[] | string;
   dietaryRestrictions: string[];
+  difficulty?: 'easy' | 'medium' | 'complex';
 }
 
 export class ApiTimeoutError extends Error {

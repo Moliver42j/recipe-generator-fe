@@ -18,12 +18,14 @@ export default function HomePage() {
   const { ingredients, setIngredients } = useHome();
   const { pantryItems, pantryItemStatus, setPantryItemStatus, spices, dietaryRequirements } = useConfig();
 
+  type Difficulty = 'easy' | 'medium' | 'complex';
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pantryOpen, setPantryOpen] = useState(true);
   const [addedToFav, setAddedToFav] = useState(false);
+  const [difficulty, setDifficulty] = useState<Difficulty>('medium');
 
   const handleAddIngredient = () => {
     if (input.trim() === '') return;
@@ -59,6 +61,7 @@ export default function HomePage() {
         pantryItems: tickedPantryItems,
         spices: spices.length === 0 ? 'all' : spices,
         dietaryRestrictions: dietaryRequirements,
+        difficulty: difficulty.toLowerCase() as Difficulty,
       });
 
       if (recipeData.error) {
@@ -105,6 +108,17 @@ export default function HomePage() {
   }, [loading]);
 
   const activePantry = pantryItems.filter((item) => pantryItemStatus[item]);
+  const difficultyOptions: { value: Difficulty; label: string }[] = [
+    { value: 'easy', label: 'Easy' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'complex', label: 'Complex' },
+  ];
+  const nutrition = recipe?.caloriesPerServing;
+  const hasNutrition = Boolean(
+    nutrition?.calories?.trim() &&
+    nutrition?.protein?.trim() &&
+    nutrition?.carbs?.trim(),
+  );
   const sectionBadgeClass = 'gradient-green-badge inline-flex h-14 w-14 items-center justify-center rounded-[20px] text-xl font-black text-white shadow-[0_16px_34px_rgba(22,163,74,0.22)]';
   const fieldClass = 'w-full rounded-2xl border border-input-border bg-input-bg px-5 py-4 text-lg text-text-primary placeholder:text-text-secondary transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-accent dark:bg-white/5';
 
@@ -205,6 +219,7 @@ export default function HomePage() {
           <button
             onClick={() => setPantryOpen(!pantryOpen)}
             className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/80 bg-white/60 text-text-secondary transition hover:bg-white/80 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+            aria-label={pantryOpen ? 'Collapse pantry staples' : 'Expand pantry staples'}
           >
             {pantryOpen ? (
               <ChevronUpIcon className="h-5 w-5" />
@@ -253,6 +268,29 @@ export default function HomePage() {
           ) : null}
         </AnimatePresence>
       </section>
+
+      <fieldset className="glass-card rounded-[32px] border border-white/80 p-5 shadow-card dark:border-white/10 sm:p-6">
+        <legend className="text-sm font-black uppercase tracking-[0.2em] text-text-secondary">
+          Difficulty
+        </legend>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          {difficultyOptions.map((option) => (
+            <label key={option.value} className="cursor-pointer">
+              <input
+                type="radio"
+                name="difficulty"
+                value={option.value}
+                checked={difficulty === option.value}
+                onChange={() => setDifficulty(option.value)}
+                className="peer sr-only"
+              />
+              <span className="block rounded-2xl border border-white/80 bg-white/50 px-4 py-3 text-center text-sm font-bold uppercase tracking-[0.14em] text-text-secondary transition-all peer-focus-visible:ring-2 peer-focus-visible:ring-accent peer-checked:border-transparent peer-checked:bg-accent peer-checked:text-white dark:border-white/10 dark:bg-white/5">
+                {option.label}
+              </span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
 
       <button
         onClick={handleGenerateRecipe}
@@ -351,6 +389,28 @@ export default function HomePage() {
             </div>
 
             <div className="space-y-8 px-6 py-6 sm:px-8 sm:py-8">
+              {hasNutrition ? (
+                <div className="rounded-[28px] border border-white/80 bg-white/45 p-5 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/5 sm:p-6">
+                  <h3 className="mb-4 text-xs font-black uppercase tracking-[0.28em] text-text-secondary">
+                    Nutrition per serving
+                  </h3>
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <div className="rounded-2xl border border-white/80 bg-white/55 px-4 py-3 dark:border-white/10 dark:bg-white/5">
+                      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-text-secondary">Calories</p>
+                      <p className="mt-2 text-lg font-black text-text-primary">{nutrition?.calories}</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/80 bg-white/55 px-4 py-3 dark:border-white/10 dark:bg-white/5">
+                      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-text-secondary">Protein</p>
+                      <p className="mt-2 text-lg font-black text-text-primary">{nutrition?.protein}</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/80 bg-white/55 px-4 py-3 dark:border-white/10 dark:bg-white/5">
+                      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-text-secondary">Carbs</p>
+                      <p className="mt-2 text-lg font-black text-text-primary">{nutrition?.carbs}</p>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
               {recipe.ingredients ? (
                 <div>
                   <h3 className="mb-4 text-xs font-black uppercase tracking-[0.28em] text-text-secondary">
