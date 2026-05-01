@@ -41,6 +41,11 @@ export default function HomePage() {
   };
 
   const handleGenerateRecipe = async () => {
+    if (ingredients.length === 0) {
+      setError('Add at least one fresh ingredient before generating a recipe.');
+      return;
+    }
+
     setLoading(true);
     setRecipe(null);
     setError(null);
@@ -57,8 +62,8 @@ export default function HomePage() {
       });
 
       if (recipeData.error) {
-        recipeData.recipe =
-          'No recipe found for chosen ingredients.\nTry adding more ingredients or changing your dietary restrictions.';
+        setError(recipeData.error);
+        return;
       }
       setRecipe(recipeData);
     } catch (error) {
