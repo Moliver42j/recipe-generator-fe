@@ -31,31 +31,49 @@ variable "logout_urls" {
 variable "google_client_id" {
   description = "Google OAuth client ID."
   type        = string
+  default     = null
 }
 
 variable "google_client_secret_ssm_parameter_name" {
   description = "SSM Parameter name containing Google OAuth client secret (SecureString)."
   type        = string
+  default     = null
+}
+
+variable "enable_google" {
+  description = "Whether to enable Google as a Cognito social identity provider."
+  type        = bool
+  default     = true
 }
 
 variable "apple_services_id" {
   description = "Apple Services ID (used as Sign in with Apple client_id)."
   type        = string
+  default     = null
 }
 
 variable "apple_team_id" {
   description = "Apple Developer Team ID."
   type        = string
+  default     = null
 }
 
 variable "apple_key_id" {
   description = "Apple Sign in with Apple key ID."
   type        = string
+  default     = null
 }
 
 variable "apple_private_key_ssm_parameter_name" {
   description = "SSM Parameter name containing Apple private key (SecureString)."
   type        = string
+  default     = null
+}
+
+variable "enable_apple" {
+  description = "Whether to enable Sign in with Apple as a Cognito social identity provider."
+  type        = bool
+  default     = true
 }
 
 variable "oauth_scopes" {

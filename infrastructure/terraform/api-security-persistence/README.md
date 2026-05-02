@@ -1,5 +1,20 @@
 # API security + persistence (DynamoDB + JWT authorizer + account Lambda wiring)
 
+## Important scope note
+
+This stack is **not required** to enable Google login with Cognito Hosted UI.
+
+Use this stack only if you also want authenticated server-side account persistence endpoints (`/account/*`).
+It creates and wires a dedicated account-state Lambda and JWT-protected routes.
+
+For this repository's current production architecture:
+
+- SPA hosting: `arn:aws:s3:::dish-from-this`
+- Existing backend Lambda: `arn:aws:lambda:eu-west-1:594386530121:function:recipeApi`
+- Existing recipe API endpoint is via API Gateway REST (v1)
+
+This Terraform module targets API Gateway **v2 HTTP API** resources, so a REST (v1) API ID is not compatible without adaptation.
+
 This Terraform stack provisions:
 
 - DynamoDB on-demand table for per-user account state
@@ -15,8 +30,14 @@ The existing recipe route is intentionally not modified by this stack, so it rem
 1. Terraform `>= 1.5`
 2. AWS credentials with permissions for API Gateway v2, Lambda, IAM, DynamoDB
 3. Existing Cognito User Pool + App Client (from `../cognito-social-auth`)
-4. Existing API Gateway HTTP API ID
-5. Deployable Lambda zip artifact for account-state handlers
+4. Existing API Gateway **HTTP API (v2)** ID
+5. Deployable Lambda zip artifact for account-state handlers (`account_lambda_package_path`)
+
+### Why a Lambda artifact is required here
+
+This module creates a separate `account-state` Lambda and integrates `/account/state` and `/account/migrate-guest` routes to it.
+Terraform needs a deployable zip (`account_lambda_package_path`) because it provisions the function itself.
+If you are only enabling social login and do not want `/account/*` server persistence yet, do not apply this stack.
 
 ## Configure variables
 

@@ -15,11 +15,13 @@ logout_urls = [
 
 google_client_id                         = "REPLACE_ME_GOOGLE_OAUTH_CLIENT_ID"
 google_client_secret_ssm_parameter_name  = "/dishfromthis/dev/cognito/google/client_secret"
+enable_google                            = true
 
 apple_services_id                        = "REPLACE_ME_APPLE_SERVICES_ID"
 apple_team_id                            = "REPLACE_ME_APPLE_TEAM_ID"
 apple_key_id                             = "REPLACE_ME_APPLE_KEY_ID"
 apple_private_key_ssm_parameter_name     = "/dishfromthis/dev/cognito/apple/private_key"
+enable_apple                             = true
 
 oauth_scopes = [
   "openid",

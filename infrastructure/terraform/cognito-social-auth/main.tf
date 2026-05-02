@@ -1,9 +1,13 @@
 data "aws_ssm_parameter" "google_client_secret" {
+  count = var.enable_google ? 1 : 0
+
   name            = var.google_client_secret_ssm_parameter_name
   with_decryption = true
 }
 
 data "aws_ssm_parameter" "apple_private_key" {
+  count = var.enable_apple ? 1 : 0
+
   name            = var.apple_private_key_ssm_parameter_name
   with_decryption = true
 }
@@ -17,6 +21,11 @@ locals {
       ManagedBy   = "terraform"
     },
     var.tags
+  )
+  enabled_identity_providers = concat(
+    ["COGNITO"],
+    var.enable_google ? ["Google"] : [],
+    var.enable_apple ? ["SignInWithApple"] : []
   )
 }
 
@@ -59,6 +68,8 @@ resource "aws_cognito_user_pool" "this" {
 }
 
 resource "aws_cognito_identity_provider" "google" {
+  count = var.enable_google ? 1 : 0
+
   user_pool_id  = aws_cognito_user_pool.this.id
   provider_name = "Google"
   provider_type = "Google"
@@ -66,16 +77,28 @@ resource "aws_cognito_identity_provider" "google" {
   provider_details = {
     authorize_scopes = "openid email profile"
     client_id        = var.google_client_id
-    client_secret    = data.aws_ssm_parameter.google_client_secret.value
+    client_secret    = data.aws_ssm_parameter.google_client_secret[0].value
   }
 
   attribute_mapping = {
     email    = "email"
     username = "sub"
   }
+
+  lifecycle {
+    precondition {
+      condition = alltrue([
+        var.google_client_id != null && trimspace(var.google_client_id) != "",
+        var.google_client_secret_ssm_parameter_name != null && trimspace(var.google_client_secret_ssm_parameter_name) != ""
+      ])
+      error_message = "When enable_google is true, set google_client_id and google_client_secret_ssm_parameter_name."
+    }
+  }
 }
 
 resource "aws_cognito_identity_provider" "apple" {
+  count = var.enable_apple ? 1 : 0
+
   user_pool_id  = aws_cognito_user_pool.this.id
   provider_name = "SignInWithApple"
   provider_type = "SignInWithApple"
@@ -85,12 +108,24 @@ resource "aws_cognito_identity_provider" "apple" {
     client_id        = var.apple_services_id
     team_id          = var.apple_team_id
     key_id           = var.apple_key_id
-    private_key      = data.aws_ssm_parameter.apple_private_key.value
+    private_key      = data.aws_ssm_parameter.apple_private_key[0].value
   }
 
   attribute_mapping = {
     email    = "email"
     username = "sub"
+  }
+
+  lifecycle {
+    precondition {
+      condition = alltrue([
+        var.apple_services_id != null && trimspace(var.apple_services_id) != "",
+        var.apple_team_id != null && trimspace(var.apple_team_id) != "",
+        var.apple_key_id != null && trimspace(var.apple_key_id) != "",
+        var.apple_private_key_ssm_parameter_name != null && trimspace(var.apple_private_key_ssm_parameter_name) != ""
+      ])
+      error_message = "When enable_apple is true, set apple_services_id, apple_team_id, apple_key_id, and apple_private_key_ssm_parameter_name."
+    }
   }
 }
 
@@ -103,7 +138,7 @@ resource "aws_cognito_user_pool_client" "spa_pkce" {
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_scopes                 = var.oauth_scopes
-  supported_identity_providers         = ["COGNITO", "Google", "SignInWithApple"]
+  supported_identity_providers         = local.enabled_identity_providers
 
   callback_urls = var.callback_urls
   logout_urls   = var.logout_urls

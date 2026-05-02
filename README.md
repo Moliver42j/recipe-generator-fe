@@ -40,6 +40,12 @@ Recipe generation currently calls the hosted endpoint in:
 const API_URL = 'https://n9f4glumj7.execute-api.eu-west-1.amazonaws.com/default/recipeApi';
 ```
 
+### Current deployed architecture (production)
+
+- SPA hosting: `arn:aws:s3:::dish-from-this`
+- Backend Lambda: `arn:aws:lambda:eu-west-1:594386530121:function:recipeApi`
+- Current API URL above is backed by API Gateway REST (v1), not HTTP API (v2).
+
 ## Social auth infrastructure (Cognito Hosted UI + Google + Apple)
 
 Terraform for Cognito social auth lives in:
@@ -64,6 +70,19 @@ Frontend env contract is defined in `.env.example`:
 - `VITE_COGNITO_REDIRECT_URI`
 - `VITE_COGNITO_LOGOUT_URI`
 
+### Production frontend Cognito env wiring
+
+Set these in your frontend deployment environment (for `www.dishfromthis.com`):
+
+- `VITE_COGNITO_REGION=eu-west-1`
+- `VITE_COGNITO_USER_POOL_ID=eu-west-1_LBlFHAYmA`
+- `VITE_COGNITO_APP_CLIENT_ID=78m5qqfn3busc331g7882eo9n5`
+- `VITE_COGNITO_HOSTED_UI_DOMAIN=dishfromthis-prod-auth.auth.eu-west-1.amazoncognito.com`
+- `VITE_COGNITO_REDIRECT_URI=https://www.dishfromthis.com/auth/callback`
+- `VITE_COGNITO_LOGOUT_URI=https://www.dishfromthis.com/`
+
+For local development, keep redirect/logout overrides in `.env.local` (uncommitted).
+
 ## API security + persistence infrastructure (JWT auth + DynamoDB)
 
 Terraform for authenticated account route infrastructure lives in:
@@ -78,6 +97,10 @@ cp terraform.tfvars.example terraform.tfvars
 terraform init
 terraform plan
 ```
+
+> This stack is optional for Google login itself.  
+> It is only needed if you want authenticated `/account/*` persistence (server-side state sync/migration).  
+> It currently assumes API Gateway **v2 HTTP API** and a separate deployable account Lambda artifact.
 
 ## Auth/session layer
 
