@@ -28,27 +28,50 @@ const BuyMeACoffeeLink = (
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 20 24"
-      className="h-6 w-5 flex-shrink-0"
+      viewBox="0 0 40 52"
+      className="h-8 w-7 flex-shrink-0"
       aria-hidden="true"
     >
+      {/* Beer body — near-black stout fill */}
       <path
-        d="M4.5 6 3.2 21.5a1.5 1.5 0 0 0 1.5 1.6h10.6a1.5 1.5 0 0 0 1.5-1.6L15.5 6Z"
-        fill="#1a0500"
+        d="M5 16 C4.5 33 6.5 44 7 46 L33 46 C33.5 44 35.5 33 35 16 Z"
+        fill="#0d0700"
       />
-      <ellipse cx="10" cy="6" rx="5.8" ry="2.2" fill="#f5f0e8" />
+      {/* Foam dome */}
       <path
-        d="M4.2 6c0 1.3 2.6 2.2 5.8 2.2s5.8-.9 5.8-2.2"
-        fill="#f5f0e8"
+        d="M5 16 C5 7 20 3 20 3 C20 3 35 7 35 16 C33 21 7 21 5 16 Z"
+        fill="#ede5d2"
       />
-      <circle cx="8" cy="5.5" r="0.5" fill="#ede8dc" />
-      <circle cx="11.5" cy="5.8" r="0.4" fill="#ede8dc" />
+      {/* Foam highlight blobs — texture */}
+      <ellipse cx="13" cy="11" rx="5" ry="2.8" fill="rgba(255,253,248,0.65)" />
+      <ellipse cx="26" cy="13" rx="3.8" ry="2.2" fill="rgba(255,253,248,0.5)" />
+      <ellipse cx="20" cy="7" rx="2.8" ry="1.8" fill="rgba(255,253,248,0.4)" />
+      {/* Glass left highlight — main reflection */}
       <path
-        d="M6 9v10.5"
-        stroke="rgba(255,255,255,0.15)"
-        strokeWidth="0.8"
+        d="M9 19 Q7.5 33 9 44"
+        stroke="rgba(255,255,255,0.42)"
+        strokeWidth="2.2"
+        fill="none"
         strokeLinecap="round"
       />
+      {/* Glass right subtle reflection */}
+      <path
+        d="M31 19 Q32.5 33 31 44"
+        stroke="rgba(255,255,255,0.15)"
+        strokeWidth="1"
+        fill="none"
+        strokeLinecap="round"
+      />
+      {/* Glass outline */}
+      <path
+        d="M5 16 C4.5 33 6.5 44 7 46 L33 46 C33.5 44 35.5 33 35 16"
+        fill="none"
+        stroke="rgba(210,235,210,0.35)"
+        strokeWidth="0.8"
+      />
+      {/* Base */}
+      <path d="M7 46 L33 46 L34 51 L6 51 Z" fill="#080400" />
+      <rect x="4.5" y="51" width="31" height="2" rx="1" fill="#080400" />
     </svg>
     Buy me a pint
   </a>
