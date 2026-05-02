@@ -1,3 +1,6 @@
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+
 const REQUIRED_ENV_VARS = [
   'USER_STATE_TABLE_NAME',
   'COGNITO_USER_POOL_ID',
@@ -292,10 +295,8 @@ function ensureRequiredEnv(env) {
 
 async function createDocumentClient() {
   if (!documentClientPromise) {
-    documentClientPromise = import('aws-sdk').then((module) => {
-      const AwsSdk = module.default ?? module;
-      return new AwsSdk.DynamoDB.DocumentClient();
-    });
+    const client = new DynamoDBClient({});
+    documentClientPromise = Promise.resolve(DynamoDBDocumentClient.from(client));
   }
 
   return documentClientPromise;
@@ -307,18 +308,18 @@ async function buildDynamoStateStore(env) {
 
   return {
     async getByUserId(userId) {
-      const response = await documentClient
-        .get({
+      const response = await documentClient.send(
+        new GetCommand({
           TableName: tableName,
           Key: { userId },
-        })
-        .promise();
+        }),
+      );
 
       return sanitizeUserRecord(response.Item ?? null);
     },
     async put(record) {
-      await documentClient
-        .put({
+      await documentClient.send(
+        new PutCommand({
           TableName: tableName,
           Item: {
             userId: record.userId,
@@ -327,8 +328,8 @@ async function buildDynamoStateStore(env) {
             updatedAt: record.updatedAt,
             migratedDeviceIds: record.migratedDeviceIds,
           },
-        })
-        .promise();
+        }),
+      );
 
       return record;
     },

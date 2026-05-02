@@ -60,7 +60,8 @@ function getApiBaseUrl(): string {
 }
 
 function createAuthorizationHeader(session: AuthSession): string {
-  return `${session.tokenType} ${session.accessToken}`;
+  const token = session.idToken ?? session.accessToken;
+  return `${session.tokenType} ${token}`;
 }
 
 async function accountFetch<TResponse>(path: string, session: AuthSession, init: RequestInit): Promise<TResponse> {

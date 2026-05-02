@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 import {
   buildCognitoLoginUrl,
   buildCognitoLogoutUrl,
@@ -20,6 +20,7 @@ interface AuthContextType {
   isGuest: boolean;
   isAuthEnabled: boolean;
   authError: string | null;
+  userFirstName: string | null;
   login: (provider?: AuthProvider) => void;
   continueAsGuest: () => void;
   logout: () => void;
@@ -27,6 +28,57 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
+
+function decodeJwtPayload(token?: string): Record<string, unknown> | null {
+  if (!token) {
+    return null;
+  }
+  const sections = token.split('.');
+  if (sections.length < 2) {
+    return null;
+  }
+
+  try {
+    const base64 = sections[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
+    const decoded = atob(padded);
+    const parsed = JSON.parse(decoded) as unknown;
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      return null;
+    }
+    return parsed as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+function getFirstNameFromSession(session: AuthSession | null): string | null {
+  if (!session) {
+    return null;
+  }
+
+  const idTokenPayload = decodeJwtPayload(session.idToken);
+  const accessTokenPayload = decodeJwtPayload(session.accessToken);
+  const preferredClaim =
+    idTokenPayload?.given_name ??
+    idTokenPayload?.name ??
+    accessTokenPayload?.given_name ??
+    accessTokenPayload?.name;
+
+  if (typeof preferredClaim === 'string' && preferredClaim.trim()) {
+    return preferredClaim.trim().split(/\s+/)[0];
+  }
+
+  const email = idTokenPayload?.email ?? accessTokenPayload?.email;
+  if (typeof email === 'string' && email.includes('@')) {
+    const firstSegment = email.split('@')[0]?.trim();
+    if (firstSegment) {
+      return firstSegment;
+    }
+  }
+
+  return null;
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AuthSession | null>(() => getStoredAuthSession());
@@ -72,6 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const authEnabled = isAuthEnabled();
   const status: AuthStatus = session ? 'authenticated' : 'guest';
+  const userFirstName = useMemo(() => getFirstNameFromSession(session), [session]);
 
   const value: AuthContextType = {
     status,
@@ -80,6 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isGuest: status === 'guest',
     isAuthEnabled: authEnabled,
     authError,
+    userFirstName,
     login,
     continueAsGuest,
     logout,

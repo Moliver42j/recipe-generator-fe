@@ -42,6 +42,7 @@ export default function Layout() {
     isAuthenticated,
     isAuthEnabled,
     authError,
+    userFirstName,
     login,
     continueAsGuest,
     logout,
@@ -82,7 +83,7 @@ export default function Layout() {
       <div className="mb-3 flex items-center gap-2 text-sm text-sidebar-text">
         <UserCircleIcon className="h-5 w-5" aria-hidden="true" />
         <p className="font-bold text-text-primary">
-          {isAuthenticated ? 'Signed in' : 'Guest mode'}
+          {isAuthenticated ? `Signed in${userFirstName ? ` - ${userFirstName}` : ''}` : 'Guest mode'}
         </p>
       </div>
 
@@ -218,7 +219,7 @@ export default function Layout() {
           <div className="flex items-center gap-2">
             <div className="hidden items-center gap-2 lg:flex">
               <span className="rounded-full border border-white/70 bg-white/60 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-header-text dark:border-white/10 dark:bg-white/5 dark:text-text-primary">
-                {isAuthenticated ? 'Signed in' : 'Guest'}
+                {isAuthenticated ? `Signed in${userFirstName ? ` - ${userFirstName}` : ''}` : 'Guest'}
               </span>
               {isAuthenticated ? (
                 <button

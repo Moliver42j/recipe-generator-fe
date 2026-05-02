@@ -8,7 +8,7 @@ const projectRoot = resolve(scriptDir, '..');
 const lambdaSourceDir = resolve(projectRoot, 'account-state-lambda');
 const artifactPath = resolve(projectRoot, 'dist', 'account-state.zip');
 
-function runZip(command, args, cwd) {
+function run(command, args, cwd) {
   return new Promise((resolvePromise, rejectPromise) => {
     const child = spawn(command, args, {
       cwd,
@@ -22,11 +22,23 @@ function runZip(command, args, cwd) {
         return;
       }
 
-      rejectPromise(new Error(`zip command failed with exit code ${code}`));
+      rejectPromise(new Error(`${command} failed with exit code ${code}`));
     });
   });
 }
 
 await mkdir(dirname(artifactPath), { recursive: true });
 await rm(artifactPath, { force: true });
-await runZip('zip', ['-q', '-j', artifactPath, 'index.mjs'], lambdaSourceDir);
+await run('npm', ['install', '--omit=dev', '--no-audit', '--no-fund'], lambdaSourceDir);
+await run(
+  'zip',
+  [
+    '-qr',
+    artifactPath,
+    'index.mjs',
+    'package.json',
+    'package-lock.json',
+    'node_modules',
+  ],
+  lambdaSourceDir,
+);
