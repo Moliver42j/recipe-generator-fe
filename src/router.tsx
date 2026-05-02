@@ -4,8 +4,13 @@ import HomePage from './pages/HomePage';
 import ConfigurationPage from './pages/ConfigurationPage';
 import FavouritesPage from './pages/FavouritesPage';
 import ExportPage from './pages/ExportPage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
 
 const router = createBrowserRouter([
+  {
+    path: '/auth/callback',
+    element: <AuthCallbackPage />,
+  },
   {
     path: '/',
     element: <Layout />,

@@ -7,10 +7,14 @@ import {
   Cog6ToothIcon,
   HeartIcon,
   ArrowDownTrayIcon,
+  ArrowRightOnRectangleIcon,
+  ArrowLeftOnRectangleIcon,
+  UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/solid';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 const navItems = [
   { to: '/', label: 'Home', icon: HomeIcon },
@@ -34,8 +38,102 @@ const BuyMeACoffeeLink = (
 export default function Layout() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const {
+    isAuthenticated,
+    isAuthEnabled,
+    login,
+    continueAsGuest,
+    logout,
+  } = useAuth();
 
   const themeLabel = theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode';
+
+  const authButtonClasses = [
+    'inline-flex w-full items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-bold transition',
+    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+    'disabled:cursor-not-allowed disabled:opacity-50',
+  ].join(' ');
+
+  const closeMobileNav = () => setMobileNavOpen(false);
+
+  const handleGoogleLogin = () => {
+    login('Google');
+    closeMobileNav();
+  };
+
+  const handleAppleLogin = () => {
+    login('SignInWithApple');
+    closeMobileNav();
+  };
+
+  const handleContinueAsGuest = () => {
+    continueAsGuest();
+    closeMobileNav();
+  };
+
+  const handleLogout = () => {
+    logout();
+    closeMobileNav();
+  };
+
+  const renderAuthControls = () => (
+    <section className="mt-4 rounded-[28px] border border-white/70 bg-white/55 p-4 dark:border-white/10 dark:bg-white/5" aria-label="Authentication">
+      <div className="mb-3 flex items-center gap-2 text-sm text-sidebar-text">
+        <UserCircleIcon className="h-5 w-5" aria-hidden="true" />
+        <p className="font-bold text-text-primary">
+          {isAuthenticated ? 'Signed in' : 'Guest mode'}
+        </p>
+      </div>
+
+      {isAuthenticated ? (
+        <button
+          type="button"
+          onClick={handleLogout}
+          className={`${authButtonClasses} border-white/70 bg-white/70 text-header-text hover:bg-white/85 dark:border-white/10 dark:bg-white/10 dark:text-text-primary dark:hover:bg-white/15`}
+          aria-label="Log out of your account"
+        >
+          <ArrowLeftOnRectangleIcon className="h-5 w-5" aria-hidden="true" />
+          Log out
+        </button>
+      ) : (
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={!isAuthEnabled}
+            className={`${authButtonClasses} gradient-green-cta border-transparent text-white`}
+            aria-label="Log in with Google"
+          >
+            <ArrowRightOnRectangleIcon className="h-5 w-5" aria-hidden="true" />
+            Login with Google
+          </button>
+          <button
+            type="button"
+            onClick={handleAppleLogin}
+            disabled={!isAuthEnabled}
+            className={`${authButtonClasses} border-white/70 bg-white/70 text-header-text hover:bg-white/85 dark:border-white/10 dark:bg-white/10 dark:text-text-primary dark:hover:bg-white/15`}
+            aria-label="Log in with Apple"
+          >
+            <ArrowRightOnRectangleIcon className="h-5 w-5" aria-hidden="true" />
+            Login with Apple
+          </button>
+          <button
+            type="button"
+            onClick={handleContinueAsGuest}
+            className={`${authButtonClasses} border-white/70 bg-white/45 text-sidebar-text hover:bg-white/65 hover:text-header-text dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10`}
+            aria-label="Continue as guest"
+          >
+            Continue as Guest
+          </button>
+          {!isAuthEnabled ? (
+            <p className="text-xs leading-5 text-sidebar-text">
+              Social login is currently unavailable.
+            </p>
+          ) : null}
+        </div>
+      )}
+    </section>
+  );
 
   const renderNavItems = (mobile = false) => (
     <ul className="space-y-2" role="list">
@@ -109,6 +207,22 @@ export default function Layout() {
           </div>
 
           <div className="flex items-center gap-2">
+            <div className="hidden items-center gap-2 lg:flex">
+              <span className="rounded-full border border-white/70 bg-white/60 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-header-text dark:border-white/10 dark:bg-white/5 dark:text-text-primary">
+                {isAuthenticated ? 'Signed in' : 'Guest'}
+              </span>
+              {isAuthenticated ? (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="inline-flex h-11 items-center gap-2 rounded-full border border-white/70 bg-white/60 px-4 text-sm font-bold text-header-text transition hover:bg-white/80 dark:border-white/10 dark:bg-white/5 dark:text-text-primary dark:hover:bg-white/10"
+                  aria-label="Log out of your account"
+                >
+                  <ArrowLeftOnRectangleIcon className="h-5 w-5" aria-hidden="true" />
+                  Log out
+                </button>
+              ) : null}
+            </div>
             <button
               type="button"
               onClick={toggleTheme}
@@ -153,6 +267,7 @@ export default function Layout() {
           </p>
           {BuyMeACoffeeLink}
         </div>
+        {renderAuthControls()}
       </aside>
 
       <AnimatePresence>
@@ -191,6 +306,7 @@ export default function Layout() {
                 {renderNavItems(true)}
               </nav>
               <div className="mt-auto pt-4">
+                {renderAuthControls()}
                 {BuyMeACoffeeLink}
               </div>
             </motion.aside>

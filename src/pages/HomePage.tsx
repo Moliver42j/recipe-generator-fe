@@ -10,13 +10,14 @@ import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useHome } from '../context/HomeContext';
 import { useConfig } from '../context/ConfigContext';
+import { useFavourites } from '../context/FavouritesContext';
 import { ApiTimeoutError, generateRecipe } from '../services/recipeApi';
-import { getFromLocalStorage, saveToLocalStorage } from '../utils/storageUtils';
 import type { Recipe } from '../types';
 
 export default function HomePage() {
   const { ingredients, setIngredients } = useHome();
   const { pantryItems, pantryItemStatus, setPantryItemStatus, spices, dietaryRequirements } = useConfig();
+  const { setFavourites } = useFavourites();
 
   type Difficulty = 'easy' | 'medium' | 'complex';
   const [input, setInput] = useState('');
@@ -84,8 +85,7 @@ export default function HomePage() {
 
   const handleAddToFavourites = () => {
     if (!recipe) return;
-    const favourites = getFromLocalStorage<Recipe[]>('favourites') || [];
-    saveToLocalStorage('favourites', [...favourites, recipe]);
+    setFavourites((prev) => [...prev, recipe]);
     setAddedToFav(true);
   };
 
