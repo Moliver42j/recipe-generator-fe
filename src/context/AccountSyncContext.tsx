@@ -203,29 +203,27 @@ export function AccountSyncProvider({ children }: { children: ReactNode }) {
           theme: getStoredTheme(),
         });
 
-        const synced = userId && hasStoredMigrationMarker(userId, deviceId)
-          ? await getAccountState(session)
-          : (await migrateGuestState(session, { deviceId, guestState })).state;
+        const shouldMigrateGuestState = Boolean(userId && !hasStoredMigrationMarker(userId, deviceId));
+        if (shouldMigrateGuestState) {
+          try {
+            await migrateGuestState(session, { deviceId, guestState });
+            if (userId) {
+              saveStoredMigrationMarker(userId, deviceId);
+            }
+          } catch (migrationError) {
+            console.error('Guest migration failed, falling back to account state fetch:', migrationError);
+          }
+        }
+
+        const synced = await getAccountState(session);
         if (cancelled) {
           return;
         }
 
-        if (userId) {
-          saveStoredMigrationMarker(userId, deviceId);
-        }
         applySyncedState(synced);
-      } catch (migrationError) {
-        try {
-          const state = await getAccountState(session);
-          if (cancelled) {
-            return;
-          }
-          applySyncedState(state);
-          console.error('Guest migration failed, account state fallback applied:', migrationError);
-        } catch (stateError) {
-          console.error('Account state hydration failed:', stateError);
-          hydratedSessionKeyRef.current = null;
-        }
+      } catch (stateError) {
+        console.error('Account state hydration failed:', stateError);
+        hydratedSessionKeyRef.current = null;
       } finally {
         if (!cancelled) {
           hasHydratedRef.current = true;
