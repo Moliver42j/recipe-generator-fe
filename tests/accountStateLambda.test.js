@@ -120,6 +120,55 @@ test('createHandler migrates guest state once per device id (idempotent)', async
   assert.equal(JSON.parse(second.body).migrated, false);
 });
 
+test('createHandler migrates only on first account login across devices', async () => {
+  const store = createInMemoryStore();
+  const handler = createHandler({
+    env,
+    now: () => '2026-01-01T00:00:00.000Z',
+    stateStoreFactory: async () => store,
+  });
+
+  const firstDevicePayload = {
+    deviceId: 'device-1',
+    guestState: {
+      ingredients: ['tomato'],
+      pantryItems: ['salt'],
+      pantryItemStatus: { salt: true },
+      spices: ['pepper'],
+      dietaryRequirements: ['vegan'],
+      favourites: [],
+      theme: 'dark',
+    },
+  };
+
+  const secondDevicePayload = {
+    deviceId: 'device-2',
+    guestState: {
+      ingredients: ['onion'],
+      pantryItems: ['oil'],
+      pantryItemStatus: { oil: true },
+      spices: ['paprika'],
+      dietaryRequirements: [],
+      favourites: [],
+      theme: 'light',
+    },
+  };
+
+  const first = await handler(buildEvent({ method: 'POST', path: '/account/migrate-guest', body: firstDevicePayload }));
+  const second = await handler(buildEvent({ method: 'POST', path: '/account/migrate-guest', body: secondDevicePayload }));
+
+  const firstBody = JSON.parse(first.body);
+  const secondBody = JSON.parse(second.body);
+
+  assert.equal(first.statusCode, 200);
+  assert.equal(second.statusCode, 200);
+  assert.equal(firstBody.migrated, true);
+  assert.equal(secondBody.migrated, false);
+  assert.deepEqual(secondBody.state.ingredients, ['tomato']);
+  assert.deepEqual(secondBody.state.pantryItems, ['salt']);
+  assert.equal(secondBody.state.theme, 'dark');
+});
+
 test('createHandler enforces authenticated claim issuer/client constraints', async () => {
   const store = createInMemoryStore();
   const handler = createHandler({

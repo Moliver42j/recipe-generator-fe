@@ -421,9 +421,8 @@ export function createHandler(options = {}) {
       }
 
       const guestState = normalizePersistedState(payload.guestState);
-      const existingRecord = await getStateOrDefault(stateStore, userId);
-      const knownDeviceIds = normalizeMigratedDeviceIds(existingRecord.migratedDeviceIds);
-      if (knownDeviceIds.includes(deviceId)) {
+      const existingRecord = await stateStore.getByUserId(userId);
+      if (existingRecord) {
         return createResponse(200, {
           migrated: false,
           state: formatPublicState(existingRecord),
@@ -432,10 +431,10 @@ export function createHandler(options = {}) {
 
       const nextRecord = {
         userId,
-        state: mergeGuestIntoPersistedState(existingRecord.state, guestState),
-        createdAt: existingRecord.createdAt ?? now(),
+        state: guestState,
+        createdAt: now(),
         updatedAt: now(),
-        migratedDeviceIds: normalizeMigratedDeviceIds([...knownDeviceIds, deviceId]),
+        migratedDeviceIds: normalizeMigratedDeviceIds([deviceId]),
       };
       await stateStore.put(nextRecord);
 
