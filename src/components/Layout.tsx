@@ -19,6 +19,41 @@ const navItems = [
   { to: '/export', label: 'Export', icon: ArrowDownTrayIcon },
 ];
 
+const BuyMeACoffeeLink = (
+  <a
+    href="https://buymeacoffee.com/dishfromthis"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="mt-3 inline-flex items-center gap-2 text-sm text-sidebar-text transition-colors hover:text-accent"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 24"
+      className="h-6 w-5 flex-shrink-0"
+      aria-hidden="true"
+    >
+      <path
+        d="M4.5 6 3.2 21.5a1.5 1.5 0 0 0 1.5 1.6h10.6a1.5 1.5 0 0 0 1.5-1.6L15.5 6Z"
+        fill="#1a0500"
+      />
+      <ellipse cx="10" cy="6" rx="5.8" ry="2.2" fill="#f5f0e8" />
+      <path
+        d="M4.2 6c0 1.3 2.6 2.2 5.8 2.2s5.8-.9 5.8-2.2"
+        fill="#f5f0e8"
+      />
+      <circle cx="8" cy="5.5" r="0.5" fill="#ede8dc" />
+      <circle cx="11.5" cy="5.8" r="0.4" fill="#ede8dc" />
+      <path
+        d="M6 9v10.5"
+        stroke="rgba(255,255,255,0.15)"
+        strokeWidth="0.8"
+        strokeLinecap="round"
+      />
+    </svg>
+    Buy me a pint
+  </a>
+);
+
 export default function Layout() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -139,6 +174,7 @@ export default function Layout() {
           <p className="mt-2 text-sm leading-6 text-sidebar-text">
             Curate pantry staples, generate recipes, and keep your favourites close.
           </p>
+          {BuyMeACoffeeLink}
         </div>
       </aside>
 
@@ -177,6 +213,9 @@ export default function Layout() {
               <nav className="flex-1 overflow-y-auto" aria-label="Primary">
                 {renderNavItems(true)}
               </nav>
+              <div className="mt-auto pt-4">
+                {BuyMeACoffeeLink}
+              </div>
             </motion.aside>
           </>
         ) : null}
