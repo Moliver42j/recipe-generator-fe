@@ -19,6 +19,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isGuest: boolean;
   isAuthEnabled: boolean;
+  authError: string | null;
   login: (provider?: AuthProvider) => void;
   continueAsGuest: () => void;
   logout: () => void;
@@ -29,6 +30,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AuthSession | null>(() => getStoredAuthSession());
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const handleAuthCallback = useCallback(async (callbackUrl: string) => {
     const parsedSession = await parseAuthCallback(callbackUrl);
@@ -38,22 +40,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback((provider?: AuthProvider) => {
     void (async () => {
+      setAuthError(null);
       const loginUrl = await buildCognitoLoginUrl(undefined, provider);
       if (!loginUrl) {
+        setAuthError('Social login is not configured for this deployment.');
         return;
       }
       window.location.assign(loginUrl);
-    })().catch(() => {});
+    })().catch((error) => {
+      const message = error instanceof Error ? error.message : 'Unable to start sign-in. Please try again.';
+      setAuthError(message);
+    });
   }, []);
 
   const continueAsGuest = useCallback(() => {
     clearAuthSession();
     setSession(null);
+    setAuthError(null);
   }, []);
 
   const logout = useCallback(() => {
     clearAuthSession();
     setSession(null);
+    setAuthError(null);
 
     const logoutUrl = buildCognitoLogoutUrl();
     if (logoutUrl) {
@@ -70,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAuthenticated: status === 'authenticated',
     isGuest: status === 'guest',
     isAuthEnabled: authEnabled,
+    authError,
     login,
     continueAsGuest,
     logout,

@@ -41,6 +41,7 @@ export default function Layout() {
   const {
     isAuthenticated,
     isAuthEnabled,
+    authError,
     login,
     continueAsGuest,
     logout,
@@ -127,6 +128,15 @@ export default function Layout() {
           {!isAuthEnabled ? (
             <p className="text-xs leading-5 text-sidebar-text">
               Social login is currently unavailable.
+            </p>
+          ) : null}
+          {authError ? (
+            <p
+              className="text-xs leading-5"
+              style={{ color: 'var(--color-chip-warm-text)' }}
+              role="status"
+            >
+              {authError}
             </p>
           ) : null}
         </div>
