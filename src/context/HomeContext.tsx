@@ -17,24 +17,16 @@ interface HomeContextType {
 const HomeContext = createContext<HomeContextType | null>(null);
 
 export const HomeProvider = ({ children }: { children: ReactNode }) => {
-  const [ingredients, setIngredients] = useState<string[]>([]);
+  const [ingredients, setIngredients] = useState<string[]>(() => getFromLocalStorage<string[]>('ingredients') ?? []);
 
   useEffect(() => {
-    const cachedIngredients = getFromLocalStorage<string[]>('ingredients');
-    if (cachedIngredients) {
-      setIngredients(cachedIngredients);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (ingredients.length > 0) {
-      saveToLocalStorage('ingredients', ingredients);
-    }
+    saveToLocalStorage('ingredients', ingredients);
   }, [ingredients]);
 
   return <HomeContext.Provider value={{ ingredients, setIngredients }}>{children}</HomeContext.Provider>;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useHome = () => {
   const context = useContext(HomeContext);
   if (!context) {

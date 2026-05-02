@@ -1,27 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   TrashIcon,
   PencilIcon,
   CheckIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { getFromLocalStorage, saveToLocalStorage } from '../utils/storageUtils';
+import { useFavourites } from '../context/FavouritesContext';
 import type { Recipe } from '../types';
 
 export default function FavouritesPage() {
-  const [favourites, setFavourites] = useState<Recipe[]>([]);
+  const { favourites, setFavourites } = useFavourites();
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
 
-  useEffect(() => {
-    const cached = getFromLocalStorage<Recipe[]>('favourites');
-    if (cached) setFavourites(cached);
-  }, []);
-
   const saveFavourites = (updated: Recipe[]) => {
     setFavourites(updated);
-    saveToLocalStorage('favourites', updated);
   };
 
   const handleDelete = (index: number) => {
