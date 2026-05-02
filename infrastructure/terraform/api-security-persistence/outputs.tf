@@ -27,3 +27,15 @@ output "account_route_ids" {
   description = "API Gateway route IDs for authenticated account routes."
   value       = { for route_key, route in aws_apigatewayv2_route.account : route_key => route.id }
 }
+
+output "guardrail_alarm_names" {
+  description = "CloudWatch alarm names created for latency/error/cost guardrails."
+  value = var.enable_guardrail_alarms ? [
+    aws_cloudwatch_metric_alarm.account_lambda_p50_latency_high[0].alarm_name,
+    aws_cloudwatch_metric_alarm.account_lambda_p95_latency_high[0].alarm_name,
+    aws_cloudwatch_metric_alarm.account_lambda_error_rate_high[0].alarm_name,
+    aws_cloudwatch_metric_alarm.dynamodb_read_usage_high[0].alarm_name,
+    aws_cloudwatch_metric_alarm.dynamodb_write_usage_high[0].alarm_name,
+    aws_cloudwatch_metric_alarm.dynamodb_throttled_requests_high[0].alarm_name
+  ] : []
+}

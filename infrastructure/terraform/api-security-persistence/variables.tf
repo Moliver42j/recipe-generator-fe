@@ -96,3 +96,63 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "enable_guardrail_alarms" {
+  description = "When true, create CloudWatch alarms for rollout latency/error/cost guardrails."
+  type        = bool
+  default     = true
+}
+
+variable "guardrail_alarm_actions" {
+  description = "SNS topic ARNs or other alarm action ARNs notified when guardrail alarms fire."
+  type        = list(string)
+  default     = []
+}
+
+variable "latency_alarm_period_seconds" {
+  description = "CloudWatch period (seconds) used by p50/p95 latency alarms."
+  type        = number
+  default     = 300
+}
+
+variable "p50_latency_threshold_ms" {
+  description = "Rollback guardrail threshold for Lambda p50 duration (milliseconds)."
+  type        = number
+  default     = 300
+}
+
+variable "p95_latency_threshold_ms" {
+  description = "Rollback guardrail threshold for Lambda p95 duration (milliseconds)."
+  type        = number
+  default     = 1200
+}
+
+variable "error_rate_threshold_percent" {
+  description = "Rollback guardrail threshold for Lambda error rate percentage."
+  type        = number
+  default     = 2
+}
+
+variable "dynamodb_usage_period_seconds" {
+  description = "CloudWatch period (seconds) used by DynamoDB usage/cost indicator alarms."
+  type        = number
+  default     = 900
+}
+
+variable "dynamodb_read_units_threshold" {
+  description = "Guardrail threshold for DynamoDB ConsumedReadCapacityUnits (sum per usage period)."
+  type        = number
+  default     = 40000
+}
+
+variable "dynamodb_write_units_threshold" {
+  description = "Guardrail threshold for DynamoDB ConsumedWriteCapacityUnits (sum per usage period)."
+  type        = number
+  default     = 40000
+}
+
+variable "dynamodb_throttled_requests_threshold" {
+  description = "Guardrail threshold for DynamoDB throttled requests (sum per latency period)."
+  type        = number
+  default     = 1
+}

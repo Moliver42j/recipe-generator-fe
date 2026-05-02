@@ -16,3 +16,18 @@ account_routes = [
 tags = {
   Owner = "platform"
 }
+
+enable_guardrail_alarms = true
+
+# Add one or more SNS topic ARNs to receive guardrail alarms.
+guardrail_alarm_actions = []
+
+latency_alarm_period_seconds = 300
+p50_latency_threshold_ms     = 300
+p95_latency_threshold_ms     = 1200
+error_rate_threshold_percent = 2
+
+dynamodb_usage_period_seconds         = 900
+dynamodb_read_units_threshold         = 40000
+dynamodb_write_units_threshold        = 40000
+dynamodb_throttled_requests_threshold = 1

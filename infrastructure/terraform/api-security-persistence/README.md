@@ -37,6 +37,7 @@ Optional overrides:
 - `account_lambda_function_name`
 - `account_routes`
 - `api_gateway_stage_name` (default `$default`)
+- Guardrail thresholds/action variables (latency, error-rate, Dynamo usage)
 
 Default `account_routes`:
 
@@ -66,3 +67,38 @@ This stack injects:
 - `COGNITO_ISSUER`
 
 Your account Lambda code should read these values and key all persisted records by authenticated user subject.
+
+## Observability guardrails for backend refactor rollout
+
+This stack now creates CloudWatch alarms (when `enable_guardrail_alarms = true`) for:
+
+- Lambda p50 latency (`Duration` p50)
+- Lambda p95 latency (`Duration` p95)
+- Lambda error rate (`Errors / Invocations * 100`)
+- DynamoDB read/write usage spikes (`ConsumedReadCapacityUnits`, `ConsumedWriteCapacityUnits`)
+- DynamoDB throttling (`ThrottledRequests`)
+
+Set `guardrail_alarm_actions` to an SNS topic ARN list to notify on alarm state changes.
+
+### Default guardrail thresholds
+
+- `p50_latency_threshold_ms = 300`
+- `p95_latency_threshold_ms = 1200`
+- `error_rate_threshold_percent = 2`
+- `dynamodb_read_units_threshold = 40000` (sum over 15m)
+- `dynamodb_write_units_threshold = 40000` (sum over 15m)
+- `dynamodb_throttled_requests_threshold = 1`
+
+Tune these per environment (dev/staging/prod) before rollout.
+
+## Rollback trigger criteria
+
+For rollout safety, treat any of the following as rollback triggers for the refactored backend path:
+
+1. p95 latency alarm breaches (2 of 3 datapoints at 5m period).
+2. p50 latency alarm breaches (2 of 3 datapoints at 5m period) and does not self-recover in the next window.
+3. Error rate > threshold (default 2%) for 2 of 3 datapoints.
+4. DynamoDB throttled requests alarm breaches for 2 consecutive datapoints.
+5. DynamoDB read/write usage alarms breach in sustained windows and expected cost envelope is exceeded.
+
+Recommended rollback action: redeploy last known-good Lambda artifact for account routes (`account_lambda_package_path`) and re-run `terraform plan` + approved `terraform apply`.
