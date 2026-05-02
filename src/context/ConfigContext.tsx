@@ -25,61 +25,34 @@ interface ConfigContextType {
 const ConfigContext = createContext<ConfigContextType | null>(null);
 
 export const ConfigProvider = ({ children }: { children: ReactNode }) => {
-  const [pantryItems, setPantryItems] = useState<string[]>([]);
-  const [pantryItemStatus, setPantryItemStatus] = useState<PantryItemStatus>({});
-  const [spices, setSpices] = useState<string[]>([]);
-  const [dietaryRequirements, setDietaryRequirements] = useState<string[]>([]);
-  const [hasLoadedFromStorage, setHasLoadedFromStorage] = useState(false);
+  const [pantryItems, setPantryItems] = useState<string[]>(
+    () => getFromLocalStorage<string[]>('pantryItems') ?? [],
+  );
+  const [pantryItemStatus, setPantryItemStatus] = useState<PantryItemStatus>(
+    () => getFromLocalStorage<PantryItemStatus>('pantryItemStatus') ?? {},
+  );
+  const [spices, setSpices] = useState<string[]>(
+    () => getFromLocalStorage<string[]>('spices') ?? [],
+  );
+  const [dietaryRequirements, setDietaryRequirements] = useState<string[]>(
+    () => getFromLocalStorage<string[]>('dietaryRequirements') ?? [],
+  );
 
   useEffect(() => {
-    const cachedPantryItems = getFromLocalStorage<string[]>('pantryItems');
-    const cachedPantryItemStatus = getFromLocalStorage<PantryItemStatus>('pantryItemStatus');
-    const cachedSpices = getFromLocalStorage<string[]>('spices');
-    const cachedDietaryRequirements = getFromLocalStorage<string[]>('dietaryRequirements');
-
-    if (cachedPantryItems) {
-      setPantryItems(cachedPantryItems);
-    }
-    if (cachedPantryItemStatus) {
-      setPantryItemStatus(cachedPantryItemStatus);
-    }
-    if (cachedSpices) {
-      setSpices(cachedSpices);
-    }
-    if (cachedDietaryRequirements) {
-      setDietaryRequirements(cachedDietaryRequirements);
-    }
-
-    setHasLoadedFromStorage(true);
-  }, []);
-
-  useEffect(() => {
-    if (!hasLoadedFromStorage) {
-      return;
-    }
     saveToLocalStorage('pantryItems', pantryItems);
-  }, [hasLoadedFromStorage, pantryItems]);
+  }, [pantryItems]);
 
   useEffect(() => {
-    if (!hasLoadedFromStorage) {
-      return;
-    }
     saveToLocalStorage('pantryItemStatus', pantryItemStatus);
-  }, [hasLoadedFromStorage, pantryItemStatus]);
+  }, [pantryItemStatus]);
 
   useEffect(() => {
-    if (!hasLoadedFromStorage) {
-      return;
-    }
     saveToLocalStorage('spices', spices);
-  }, [hasLoadedFromStorage, spices]);
+  }, [spices]);
 
   useEffect(() => {
-    if (!hasLoadedFromStorage) {
-      return;
-    }
     saveToLocalStorage('dietaryRequirements', dietaryRequirements);
-  }, [dietaryRequirements, hasLoadedFromStorage]);
+  }, [dietaryRequirements]);
 
   return (
     <ConfigContext.Provider

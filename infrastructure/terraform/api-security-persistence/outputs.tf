@@ -19,13 +19,13 @@ output "account_lambda_role_name" {
 }
 
 output "api_jwt_authorizer_id" {
-  description = "API Gateway JWT authorizer ID."
-  value       = aws_apigatewayv2_authorizer.jwt.id
+  description = "API Gateway REST authorizer ID."
+  value       = aws_api_gateway_authorizer.cognito.id
 }
 
 output "account_route_ids" {
-  description = "API Gateway route IDs for authenticated account routes."
-  value       = { for route_key, route in aws_apigatewayv2_route.account : route_key => route.id }
+  description = "API Gateway method IDs for authenticated account routes."
+  value       = { for route_key, method in aws_api_gateway_method.account : route_key => method.id }
 }
 
 output "guardrail_alarm_names" {

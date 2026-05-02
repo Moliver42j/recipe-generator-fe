@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:account-lambda": "node ./scripts/package-account-state-lambda.mjs",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test --experimental-strip-types tests/**/*.test.ts tests/**/*.test.js"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

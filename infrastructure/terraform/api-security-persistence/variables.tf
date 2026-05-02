@@ -14,14 +14,14 @@ variable "environment" {
 }
 
 variable "api_gateway_id" {
-  description = "Existing API Gateway HTTP API ID that serves recipe/account routes."
+  description = "Existing API Gateway REST API (v1) ID that serves recipe/account routes."
   type        = string
 }
 
 variable "api_gateway_stage_name" {
   description = "Stage name used by API Gateway for Lambda invoke permissions."
   type        = string
-  default     = "$default"
+  default     = "default"
 }
 
 variable "cognito_user_pool_id" {
@@ -32,12 +32,6 @@ variable "cognito_user_pool_id" {
 variable "cognito_app_client_id" {
   description = "Cognito User Pool App Client ID accepted as JWT audience."
   type        = string
-}
-
-variable "jwt_identity_sources" {
-  description = "API Gateway request locations containing bearer JWTs."
-  type        = list(string)
-  default     = ["$request.header.Authorization"]
 }
 
 variable "dynamodb_user_state_table_name" {

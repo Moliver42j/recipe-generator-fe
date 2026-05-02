@@ -100,7 +100,15 @@ terraform plan
 
 > This stack is optional for Google login itself.  
 > It is only needed if you want authenticated `/account/*` persistence (server-side state sync/migration).  
-> It currently assumes API Gateway **v2 HTTP API** and a separate deployable account Lambda artifact.
+> It is wired for API Gateway **REST (v1)** and a separate deployable account Lambda artifact.
+
+Build the Lambda artifact expected by Terraform:
+
+```bash
+npm run build:account-lambda
+```
+
+This writes `dist/account-state.zip`.
 
 ## Auth/session layer
 

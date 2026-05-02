@@ -14,6 +14,15 @@ import { useFavourites } from '../context/FavouritesContext';
 import { ApiTimeoutError, generateRecipe } from '../services/recipeApi';
 import type { Recipe } from '../types';
 
+const LOADING_MESSAGES = [
+  'Finding the perfect recipe…',
+  'Checking your ingredients…',
+  'Consulting the chef…',
+  'Almost there…',
+  'Stirring the pot…',
+  'Adding a pinch of magic…',
+];
+
 export default function HomePage() {
   const { ingredients, setIngredients } = useHome();
   const { pantryItems, pantryItemStatus, setPantryItemStatus, spices, dietaryRequirements } = useConfig();
@@ -49,6 +58,7 @@ export default function HomePage() {
       return;
     }
 
+    setLoadingMsgIndex(0);
     setLoading(true);
     setRecipe(null);
     setError(null);
@@ -89,20 +99,14 @@ export default function HomePage() {
     setAddedToFav(true);
   };
 
-  const loadingMessages = [
-    'Finding the perfect recipe…',
-    'Checking your ingredients…',
-    'Consulting the chef…',
-    'Almost there…',
-    'Stirring the pot…',
-    'Adding a pinch of magic…',
-  ];
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
 
   useEffect(() => {
-    if (!loading) { setLoadingMsgIndex(0); return; }
+    if (!loading) {
+      return;
+    }
     const interval = setInterval(() => {
-      setLoadingMsgIndex((prev) => (prev + 1) % loadingMessages.length);
+      setLoadingMsgIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
     }, 2500);
     return () => clearInterval(interval);
   }, [loading]);
@@ -303,7 +307,7 @@ export default function HomePage() {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l4-4-4-4v4a8 8 0 100 16 8 8 0 01-8-8z" />
             </svg>
-            {loadingMessages[loadingMsgIndex]}
+            {LOADING_MESSAGES[loadingMsgIndex]}
           </>
         ) : (
           <>

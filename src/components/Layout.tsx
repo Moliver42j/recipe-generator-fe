@@ -100,7 +100,6 @@ export default function Layout() {
           <button
             type="button"
             onClick={handleGoogleLogin}
-            disabled={!isAuthEnabled}
             className={`${authButtonClasses} gradient-green-cta border-transparent text-white`}
             aria-label="Log in with Google"
           >

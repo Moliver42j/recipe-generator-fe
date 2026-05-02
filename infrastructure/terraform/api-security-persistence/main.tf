@@ -12,6 +12,28 @@ locals {
   dynamodb_user_state_table_name = coalesce(var.dynamodb_user_state_table_name, "${local.name}-user-state")
   account_lambda_function_name   = coalesce(var.account_lambda_function_name, "${local.name}-account-state")
   cognito_issuer                 = "https://cognito-idp.${var.aws_region}.amazonaws.com/${var.cognito_user_pool_id}"
+  api_gateway_execution_arn      = "arn:${data.aws_partition.current.partition}:execute-api:${var.aws_region}:${data.aws_caller_identity.current.account_id}:${var.api_gateway_id}"
+  account_route_config = {
+    for route in var.account_routes : route => {
+      method   = upper(split(" ", trimspace(route))[0])
+      path     = trim(split(" ", trimspace(route))[1], "/")
+      segments = split("/", trim(split(" ", trimspace(route))[1], "/"))
+    }
+  }
+  account_options_config = {
+    for path in distinct([for route in values(local.account_route_config) : route.path]) : path => {
+      path     = path
+      segments = split("/", path)
+      methods = sort(distinct([
+        for route in values(local.account_route_config) : route.method
+        if route.path == path
+      ]))
+    }
+  }
+  account_child_path_parts = toset([
+    for route in values(local.account_route_config) : route.segments[1]
+    if length(route.segments) > 1
+  ])
 }
 
 resource "aws_dynamodb_table" "user_state" {
@@ -109,34 +131,134 @@ resource "aws_lambda_function" "account_state" {
   ]
 }
 
-resource "aws_apigatewayv2_authorizer" "jwt" {
-  api_id           = var.api_gateway_id
-  authorizer_type  = "JWT"
-  identity_sources = var.jwt_identity_sources
-  name             = "${local.name}-jwt-authorizer"
+resource "aws_api_gateway_authorizer" "cognito" {
+  name            = "${local.name}-cognito-authorizer"
+  rest_api_id     = var.api_gateway_id
+  type            = "COGNITO_USER_POOLS"
+  provider_arns   = [data.aws_cognito_user_pool.target.arn]
+  identity_source = "method.request.header.Authorization"
+}
 
-  jwt_configuration {
-    audience = [var.cognito_app_client_id]
-    issuer   = local.cognito_issuer
+resource "aws_api_gateway_resource" "account" {
+  rest_api_id = var.api_gateway_id
+  parent_id   = data.aws_api_gateway_resource.root.id
+  path_part   = "account"
+}
+
+resource "aws_api_gateway_resource" "account_children" {
+  for_each = local.account_child_path_parts
+
+  rest_api_id = var.api_gateway_id
+  parent_id   = aws_api_gateway_resource.account.id
+  path_part   = each.value
+}
+
+resource "aws_api_gateway_method" "account" {
+  for_each = local.account_route_config
+
+  rest_api_id   = var.api_gateway_id
+  resource_id   = length(each.value.segments) > 1 ? aws_api_gateway_resource.account_children[each.value.segments[1]].id : aws_api_gateway_resource.account.id
+  http_method   = each.value.method
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.cognito.id
+}
+
+resource "aws_api_gateway_integration" "account" {
+  for_each = local.account_route_config
+
+  rest_api_id             = var.api_gateway_id
+  resource_id             = aws_api_gateway_method.account[each.key].resource_id
+  http_method             = aws_api_gateway_method.account[each.key].http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.account_state.invoke_arn
+}
+
+resource "aws_api_gateway_method" "account_options" {
+  for_each = local.account_options_config
+
+  rest_api_id   = var.api_gateway_id
+  resource_id   = length(each.value.segments) > 1 ? aws_api_gateway_resource.account_children[each.value.segments[1]].id : aws_api_gateway_resource.account.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "account_options" {
+  for_each = local.account_options_config
+
+  rest_api_id = var.api_gateway_id
+  resource_id = aws_api_gateway_method.account_options[each.key].resource_id
+  http_method = aws_api_gateway_method.account_options[each.key].http_method
+  type        = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
   }
 }
 
-resource "aws_apigatewayv2_integration" "account_lambda" {
-  api_id                 = var.api_gateway_id
-  integration_type       = "AWS_PROXY"
-  integration_method     = "POST"
-  integration_uri        = aws_lambda_function.account_state.invoke_arn
-  payload_format_version = "2.0"
+resource "aws_api_gateway_method_response" "account_options" {
+  for_each = local.account_options_config
+
+  rest_api_id = var.api_gateway_id
+  resource_id = aws_api_gateway_method.account_options[each.key].resource_id
+  http_method = aws_api_gateway_method.account_options[each.key].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
 }
 
-resource "aws_apigatewayv2_route" "account" {
-  for_each = toset(var.account_routes)
+resource "aws_api_gateway_integration_response" "account_options" {
+  for_each = local.account_options_config
 
-  api_id             = var.api_gateway_id
-  route_key          = each.value
-  target             = "integrations/${aws_apigatewayv2_integration.account_lambda.id}"
-  authorization_type = "JWT"
-  authorizer_id      = aws_apigatewayv2_authorizer.jwt.id
+  rest_api_id = var.api_gateway_id
+  resource_id = aws_api_gateway_method.account_options[each.key].resource_id
+  http_method = aws_api_gateway_method.account_options[each.key].http_method
+  status_code = aws_api_gateway_method_response.account_options[each.key].status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Authorization,Content-Type'"
+    "method.response.header.Access-Control-Allow-Methods" = "'${join(",", concat(["OPTIONS"], each.value.methods))}'"
+  }
+}
+
+resource "aws_api_gateway_deployment" "account_routes" {
+  rest_api_id = var.api_gateway_id
+  stage_name  = var.api_gateway_stage_name
+
+  triggers = {
+    redeployment = sha1(jsonencode({
+      authorizer_id   = aws_api_gateway_authorizer.cognito.id
+      account_paths   = [for resource in aws_api_gateway_resource.account_children : resource.path]
+      account_methods = [for method in aws_api_gateway_method.account : method.id]
+      account_integrations = [
+        for integration in aws_api_gateway_integration.account : integration.id
+      ]
+      account_options_methods = [for method in aws_api_gateway_method.account_options : method.id]
+      account_options_method_responses = [
+        for response in aws_api_gateway_method_response.account_options : response.id
+      ]
+      account_options_integrations = [
+        for integration in aws_api_gateway_integration.account_options : integration.id
+      ]
+      account_options_integration_responses = [
+        for response in aws_api_gateway_integration_response.account_options : response.id
+      ]
+    }))
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.account,
+    aws_api_gateway_integration_response.account_options
+  ]
 }
 
 resource "aws_lambda_permission" "allow_api_gateway_account_routes" {
@@ -144,7 +266,7 @@ resource "aws_lambda_permission" "allow_api_gateway_account_routes" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.account_state.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${data.aws_apigatewayv2_api.target.execution_arn}/${var.api_gateway_stage_name}/*"
+  source_arn    = "${local.api_gateway_execution_arn}/${var.api_gateway_stage_name}/*/account/*"
 }
 
 resource "aws_cloudwatch_metric_alarm" "account_lambda_p50_latency_high" {
