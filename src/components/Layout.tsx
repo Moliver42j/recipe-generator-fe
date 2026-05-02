@@ -26,53 +26,7 @@ const BuyMeACoffeeLink = (
     rel="noopener noreferrer"
     className="mt-3 inline-flex items-center gap-2 text-sm text-sidebar-text transition-colors hover:text-accent"
   >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 40 52"
-      className="h-8 w-7 flex-shrink-0"
-      aria-hidden="true"
-    >
-      {/* Beer body — near-black stout fill */}
-      <path
-        d="M5 16 C4.5 33 6.5 44 7 46 L33 46 C33.5 44 35.5 33 35 16 Z"
-        fill="#0d0700"
-      />
-      {/* Foam dome */}
-      <path
-        d="M5 16 C5 7 20 3 20 3 C20 3 35 7 35 16 C33 21 7 21 5 16 Z"
-        fill="#ede5d2"
-      />
-      {/* Foam highlight blobs — texture */}
-      <ellipse cx="13" cy="11" rx="5" ry="2.8" fill="rgba(255,253,248,0.65)" />
-      <ellipse cx="26" cy="13" rx="3.8" ry="2.2" fill="rgba(255,253,248,0.5)" />
-      <ellipse cx="20" cy="7" rx="2.8" ry="1.8" fill="rgba(255,253,248,0.4)" />
-      {/* Glass left highlight — main reflection */}
-      <path
-        d="M9 19 Q7.5 33 9 44"
-        stroke="rgba(255,255,255,0.42)"
-        strokeWidth="2.2"
-        fill="none"
-        strokeLinecap="round"
-      />
-      {/* Glass right subtle reflection */}
-      <path
-        d="M31 19 Q32.5 33 31 44"
-        stroke="rgba(255,255,255,0.15)"
-        strokeWidth="1"
-        fill="none"
-        strokeLinecap="round"
-      />
-      {/* Glass outline */}
-      <path
-        d="M5 16 C4.5 33 6.5 44 7 46 L33 46 C33.5 44 35.5 33 35 16"
-        fill="none"
-        stroke="rgba(210,235,210,0.35)"
-        strokeWidth="0.8"
-      />
-      {/* Base */}
-      <path d="M7 46 L33 46 L34 51 L6 51 Z" fill="#080400" />
-      <rect x="4.5" y="51" width="31" height="2" rx="1" fill="#080400" />
-    </svg>
+    <span className="flex-shrink-0 text-base leading-none" aria-hidden="true">🍺</span>
     Buy me a pint
   </a>
 );
